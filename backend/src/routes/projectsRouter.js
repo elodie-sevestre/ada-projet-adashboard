@@ -38,7 +38,7 @@ projectsRouter.get("/:id", async (req, res) => {
 // GET /:id/skills - récupérer les skills d'un projet
 projectsRouter.get("/:id/skills", async (req, res) => {
   const { rows } = await pool.query(
-    "SELECT projects.name, json_agg(json_build_object('id', skills.id,'description', skills.description,'validated', skills.validated)) AS skills FROM projects JOIN skills ON projects.id = skills.project_id WHERE projects.id = $1 GROUP BY projects.name",
+    "SELECT skills.id, skills.description, skills.validated FROM skills WHERE skills.project_id = $1",
     [req.params.id],
   );
   res.json(rows);
