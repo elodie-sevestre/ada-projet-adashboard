@@ -39,11 +39,18 @@ function SkillItem({ skill, onChange }) {
     <div className="skill-row">
       <input
         type="checkbox"
+        id={`skill-${skill.id}`}
         checked={skill.validated}
         onChange={handleValidated}
       />
-      <span>{skill.description}</span>
-      <button onClick={handleDelete}>Supprimer</button>
+      <label htmlFor={`skill-${skill.id}`}>{skill.description}</label>
+      <button
+        className="btn-delete"
+        onClick={handleDelete}
+        aria-label="Supprimer la compétence"
+      >
+        ➖
+      </button>
     </div>
   );
 }
