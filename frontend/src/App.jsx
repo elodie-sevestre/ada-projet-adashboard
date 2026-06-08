@@ -18,10 +18,10 @@ function App() {
   return (
     <>
       <Header activeView={activeView} onNavigate={setActiveView} />
-      <div key={activeView} className="view-container">
+      <main key={activeView} className="view-container">
         {activeView === "categories" && <Categories />}
         {activeView === "projects" && <Projects />}
-      </div>
+      </main>
     </>
   );
 }
