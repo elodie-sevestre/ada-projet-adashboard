@@ -1,15 +1,26 @@
 // ==================== Composant Projects ====================
 // Vue de gestion des projets.
-// Permet de :
-//   - voir la liste de tous les projets existants sous forme de tags
-//   - créer un nouveau projet via un formulaire inline
+// Affiche les projets sous forme de cartes et permet d'en créer de nouveaux.
+//
+// Le state "refresh" force le rechargement de la liste
+// après une création, modification ou suppression.
 
 import { useState, useEffect } from "react";
+import ProjectCard from "./ProjectCard";
 
 function Projects() {
   const [projects, setProjects] = useState([]);
-  const [inputProject, setInputProject] = useState("");
+  const [refresh, setRefresh] = useState(0);
   const [showForm, setShowForm] = useState(false);
+
+  // Formulaire de création — champs contrôlés
+  const [newProject, setNewProject] = useState({
+    name: "",
+    description: "",
+    status: "à_initier",
+    started_at: "",
+    finished_at: "",
+  });
 
   // Récupère tous les projets depuis l'API
   const fetchProjects = async () => {
@@ -24,32 +35,25 @@ function Projects() {
 
   useEffect(() => {
     fetchProjects();
-  }, []);
+  }, [refresh]); // se relance à chaque changement de "refresh"
+
+  // Met à jour un champ du formulaire de création
+  const handleNewChange = (e) => {
+    setNewProject({ ...newProject, [e.target.name]: e.target.value });
+  };
 
   // Crée un nouveau projet via POST
   const handleAddProject = async () => {
-    if (!inputProject.trim()) return;
+    if (!newProject.name.trim()) return;
     try {
       await fetch("http://localhost:3000/projects", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: inputProject }),
+        body: JSON.stringify(newProject),
       });
-      setInputProject("");
+      setNewProject({ name: "", description: "", status: "à_initier", started_at: "", finished_at: "" });
       setShowForm(false);
-      await fetchProjects();
-    } catch (err) {
-      console.error("Erreur :", err);
-    }
-  };
-
-  // Supprime un projet via DELETE
-  const handleDeleteProject = async (id) => {
-    try {
-      await fetch(`http://localhost:3000/projects/${id}`, {
-        method: "DELETE",
-      });
-      await fetchProjects();
+      setRefresh((prev) => prev + 1);
     } catch (err) {
       console.error("Erreur :", err);
     }
@@ -59,40 +63,57 @@ function Projects() {
     <>
       <h3>Projets</h3>
 
-      {/* Liste des projets sous forme de tags */}
-      <div className="project-tags">
+      {/* Grille de cartes projets */}
+      <div className="projects-grid">
         {projects.map((project) => (
-          <div key={project.id} className="project-tag">
-            <span>{project.name}</span>
-            <button
-              className="tag-delete"
-              onClick={() => handleDeleteProject(project.id)}
-              aria-label={`Supprimer le projet ${project.name}`}
-            >
-              ×
-            </button>
-          </div>
+          <ProjectCard
+            key={project.id}
+            project={project}
+            onRefresh={() => setRefresh((prev) => prev + 1)}
+          />
         ))}
       </div>
 
-      {/* Bouton pour afficher/masquer le formulaire d'ajout */}
+      {/* Bouton pour afficher/masquer le formulaire de création */}
       <button className="btn-add" onClick={() => setShowForm(!showForm)}>
         + nouveau projet
       </button>
 
-      {/* Formulaire d'ajout de projet (conditionnel) */}
+      {/* Formulaire de création (conditionnel) */}
       {showForm && (
-        <div className="add-form">
+        <div className="project-form">
           <input
             type="text"
-            placeholder="Nom du projet..."
-            value={inputProject}
-            onChange={(e) => setInputProject(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && handleAddProject()}
+            name="name"
+            placeholder="Nom du projet"
+            value={newProject.name}
+            onChange={handleNewChange}
           />
-          <button className="btn-validate" onClick={handleAddProject}>
-            OK
-          </button>
+          <textarea
+            name="description"
+            placeholder="Description"
+            value={newProject.description}
+            onChange={handleNewChange}
+          />
+          <select name="status" value={newProject.status} onChange={handleNewChange}>
+            <option value="à_initier">à initier</option>
+            <option value="en_cours">en cours</option>
+            <option value="terminé">terminé</option>
+          </select>
+          <div className="form-dates">
+            <label>
+              Début
+              <input type="date" name="started_at" value={newProject.started_at} onChange={handleNewChange} />
+            </label>
+            <label>
+              Fin
+              <input type="date" name="finished_at" value={newProject.finished_at} onChange={handleNewChange} />
+            </label>
+          </div>
+          <div className="form-actions">
+            <button className="btn-validate" onClick={handleAddProject}>Créer</button>
+            <button className="btn-cancel" onClick={() => setShowForm(false)}>Annuler</button>
+          </div>
         </div>
       )}
     </>
