@@ -11,16 +11,16 @@ import { useState } from "react";
 
 // Couleurs associées aux statuts
 const STATUS_COLORS = {
-  "à_initier": "#FFF3AE",
-  "en_cours":  "#AEE2FF",
-  "terminé":   "#C8F7C5",
+  "à_initier": "#F0ECD4",
+  "en_cours":  "#D6E8F0",
+  "terminé":   "#D4ECD2",
 };
 
 // Emojis associés aux statuts
 const STATUS_EMOJI = {
-  "à_initier": "⚪",
-  "en_cours":  "🔵",
-  "terminé":   "🟢",
+  "à_initier": "#F0ECD4",
+  "en_cours":  "#D6E8F0",
+  "terminé":   "#D4ECD2",
 };
 
 function ProjectCard({ project, onRefresh }) {

@@ -12,14 +12,14 @@
 import { useState, useEffect } from "react";
 import SkillPopup from "./SkillPopup";
 
-// Palette de couleurs cycliques pour différencier visuellement les cartes
+// Palette de couleurs désaturées harmonisée avec le thème revue scientifique
 const CARD_COLORS = [
-  "#AEE2FF",
-  "#FFD6E7",
-  "#C8F7C5",
-  "#FFF3AE",
-  "#E8C9FF",
-  "#FFD9A0",
+  "#D6E8F0",
+  "#F0DDE6",
+  "#D4ECD2",
+  "#F0ECD4",
+  "#E4D8EE",
+  "#EFE0C8",
 ];
 
 function CategoryCard({ category, onRefresh }) {

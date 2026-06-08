@@ -16,12 +16,12 @@ import SkillItem from "./SkillItem";
 
 // Même palette que CategoryCard pour cohérence visuelle
 const CARD_COLORS = [
-  "#AEE2FF",
-  "#FFD6E7",
-  "#C8F7C5",
-  "#FFF3AE",
-  "#E8C9FF",
-  "#FFD9A0",
+  "#D6E8F0",
+  "#F0DDE6",
+  "#D4ECD2",
+  "#F0ECD4",
+  "#E4D8EE",
+  "#EFE0C8",
 ];
 
 function SkillPopup({ category, skills, onClose, onChange }) {
