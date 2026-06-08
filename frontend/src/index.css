@@ -1,7 +1,11 @@
-@font-face {
-  font-family: "Virgil";
-  src: url("https://excalidraw.com/Virgil.woff2") format("woff2");
-}
+/* ============================================================
+   ADASHBOARD — Thème "Revue scientifique"
+   Palette : crème #F7F4EE, noir #1C1C1C, bordeaux #8B1A1A,
+             gris clair #E8E4DC, gris texte #555
+   Typographie : Georgia (sérif) pour titres, système pour corps
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Source+Sans+3:wght@300;400;600&display=swap');
 
 * {
   box-sizing: border-box;
@@ -10,303 +14,58 @@
 }
 
 body {
-  font-family: "Virgil", cursive;
-  background-color: #f9f7f3;
-  color: #1a1a1a;
-  padding: 2rem;
+  font-family: 'Source Sans 3', system-ui, sans-serif;
+  font-weight: 400;
+  background-color: #F7F4EE;
+  color: #1C1C1C;
+  padding: 2.5rem 3rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ── Typographie ── */
+
+h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 2.2rem;
+  font-weight: 600;
+  letter-spacing: -0.5px;
+  color: #1C1C1C;
+}
+
+h2 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.3rem;
+  font-weight: 400;
+  color: #1C1C1C;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid #1C1C1C;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 0.85rem;
+}
+
+h3 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.1rem;
+  font-weight: 400;
+  color: #555;
+  margin-bottom: 1.5rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 0.8rem;
 }
 
 /* ── Header ── */
 
-h1 {
-  font-size: 36px;
-  font-weight: normal;
-  border-bottom: 2.5px solid #1a1a1a;
-  padding-bottom: 1rem;
-  margin-bottom: 2rem;
-}
-
-h3 {
-  font-size: 22px;
-  font-weight: normal;
-  margin-bottom: 1.5rem;
-}
-
-/* ── Grille de projets ── */
-
-.projects-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-}
-
-/* ── Carte projet ── */
-
-.project-card {
-  border-radius: 12px;
-  border: 3px solid #1a1a1a;
-  padding: 1.25rem;
-  position: relative;
-  background: var(--card-bg, #aee2ff);
-  box-shadow: 5px 5px 0px #1a1a1a;
-}
-
-.project-emoji {
-  font-size: 28px;
-  margin-bottom: 6px;
-  display: block;
-}
-
-.project-name {
-  font-size: 20px;
-  color: #1a1a1a;
-  margin-bottom: 4px;
-}
-
-.project-description {
-  font-size: 13px;
-  color: #333;
-  margin-bottom: 12px;
-}
-
-/* ── Progress bar ── */
-
-.progress-wrap {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 14px;
-}
-
-.progress-track {
-  flex: 1;
-  height: 12px;
-  background: rgba(0, 0, 0, 0.15);
-  border-radius: 99px;
-  border: 2px solid #1a1a1a;
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  border-radius: 99px;
-  background: #1a1a1a;
-  transition: width 0.4s ease;
-}
-
-.progress-pct {
-  font-size: 14px;
-  color: #1a1a1a;
-  min-width: 38px;
-  text-align: right;
-}
-
-/* ── Bouton voir les compétences ── */
-
-.btn-skills {
-  font-family: "Virgil", cursive;
-  font-size: 15px;
-  background: #1a1a1a;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 7px 14px;
-  cursor: pointer;
-  width: 100%;
-  transition: opacity 0.2s;
-}
-
-.btn-skills:hover {
-  opacity: 0.8;
-}
-
-/* ── Overlay pop-up ── */
-
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 100;
-}
-
-/* ── Pop-up ── */
-
-.popup {
-  background: #fff;
-  border: 3px solid #1a1a1a;
-  border-radius: 14px;
-  box-shadow: 6px 6px 0px #1a1a1a;
-  padding: 1.5rem;
-  width: 340px;
-  max-height: 80vh;
-  overflow-y: auto;
-  font-family: "Virgil", cursive;
-}
-
-.popup-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.popup-title {
-  font-size: 22px;
-  color: #1a1a1a;
-}
-
-.btn-close {
-  background: none;
-  border: none;
-  font-size: 22px;
-  cursor: pointer;
-  color: #1a1a1a;
-  font-family: "Virgil", cursive;
-  line-height: 1;
-}
-
-.btn-close:hover {
-  opacity: 0.6;
-}
-
-/* ── Liste de skills dans la pop-up ── */
-
-.skill-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 0;
-  border-bottom: 1.5px dashed #ccc;
-  font-size: 15px;
-  color: #1a1a1a;
-}
-
-.skill-row:last-child {
-  border-bottom: none;
-}
-
-.skill-dot {
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  border: 2px solid #1a1a1a;
-  flex-shrink: 0;
-  background: transparent;
-}
-
-.skill-dot.done {
-  background: #1a1a1a;
-}
-
-.skill-label {
-  flex: 1;
-}
-
-.skill-label.done {
-  text-decoration: line-through;
-  color: #888;
-}
-
-input[type="checkbox"] {
-  accent-color: #1a1a1a;
-  width: 16px;
-  height: 16px;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-
-.btn-delete {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-family: "Virgil", cursive;
-  font-size: 14px;
-  color: #aaa;
-  padding: 0 4px;
-  transition: color 0.2s;
-}
-
-.btn-delete:hover {
-  color: #d85a30;
-}
-
-/* ── Formulaire ajout skill ── */
-
-.add-form {
-  display: flex;
-  gap: 8px;
-  margin-top: 14px;
-}
-
-.add-form input[type="text"] {
-  flex: 1;
-  font-family: "Virgil", cursive;
-  font-size: 14px;
-  padding: 7px 10px;
-  border: 2px solid #1a1a1a;
-  border-radius: 8px;
-  background: #fafafa;
-  outline: none;
-}
-
-.add-form input[type="text"]:focus {
-  background: #fff;
-}
-
-.btn-validate {
-  font-family: "Virgil", cursive;
-  font-size: 14px;
-  padding: 7px 14px;
-  background: #1a1a1a;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: opacity 0.2s;
-}
-
-.btn-validate:hover {
-  opacity: 0.8;
-}
-
-.btn-add {
-  font-family: "Virgil", cursive;
-  font-size: 15px;
-  background: none;
-  border: 2px dashed #1a1a1a;
-  border-radius: 8px;
-  padding: 6px 14px;
-  width: 100%;
-  cursor: pointer;
-  margin-top: 12px;
-  transition: background 0.2s;
-}
-
-.btn-add:hover {
-  background: rgba(0, 0, 0, 0.07);
-}
-
-/* ── Couleurs des cartes (à appliquer via style="--card-bg:...")
-   bleu   : --card-bg: #AEE2FF
-   rose   : --card-bg: #FFD6E7
-   vert   : --card-bg: #C8F7C5
-   jaune  : --card-bg: #FFF3AE
-   violet : --card-bg: #E8C9FF
-   orange : --card-bg: #FFD9A0
-── */
-
-/* ── Navigation header ── */
-
 .app-header {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
-  border-bottom: 2.5px solid #1a1a1a;
-  padding-bottom: 1rem;
-  margin-bottom: 2rem;
+  border-bottom: 2px solid #1C1C1C;
+  padding-bottom: 1.2rem;
+  margin-bottom: 2.5rem;
 }
 
 .app-header h1 {
@@ -315,156 +74,471 @@ input[type="checkbox"] {
   margin-bottom: 0;
 }
 
+/* ── Navigation ── */
+
 .nav-tabs {
   display: flex;
-  gap: 8px;
+  gap: 4px;
+  background: #E8E4DC;
+  border-radius: 6px;
+  padding: 3px;
 }
 
 .nav-tab {
-  font-family: "Virgil", cursive;
-  font-size: 16px;
+  font-family: 'Source Sans 3', system-ui, sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
   background: none;
-  border: 2px solid #1a1a1a;
-  border-radius: 8px;
-  padding: 6px 16px;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 18px;
   cursor: pointer;
-  color: #1a1a1a;
-  transition: background 0.2s;
+  color: #777;
+  transition: all 0.15s;
 }
 
 .nav-tab:hover {
-  background: rgba(0, 0, 0, 0.07);
+  color: #1C1C1C;
 }
 
 .nav-tab.active {
-  background: #1a1a1a;
-  color: #fff;
+  background: #1C1C1C;
+  color: #F7F4EE;
 }
 
-/* ── Tags projets ── */
+/* ── Grille catégories ── */
 
-.project-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 1.5rem;
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
 }
 
-.project-tag {
+/* ── Carte catégorie ── */
+
+.category-card {
+  background: #fff;
+  border: 1px solid #D8D3C8;
+  border-radius: 4px;
+  padding: 1.5rem;
+  border-top: 3px solid #1C1C1C;
+  transition: box-shadow 0.2s;
+}
+
+.category-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+
+.category-name {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #1C1C1C;
+}
+
+/* ── Barre de progression ── */
+
+.progress-wrap {
   display: flex;
   align-items: center;
-  gap: 6px;
-  background: #fff;
-  border: 2px solid #1a1a1a;
-  border-radius: 99px;
-  padding: 4px 12px;
-  font-size: 14px;
-  box-shadow: 3px 3px 0px #1a1a1a;
+  gap: 10px;
+  margin-bottom: 1.2rem;
 }
 
-.tag-delete {
+.progress-track {
+  flex: 1;
+  height: 5px;
+  background: #E8E4DC;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: #8B1A1A;
+  transition: width 0.4s ease;
+}
+
+.progress-pct {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #8B1A1A;
+  min-width: 36px;
+  text-align: right;
+  letter-spacing: 0.5px;
+}
+
+/* ── Boutons de la carte ── */
+
+.btn-skills {
+  font-family: 'Source Sans 3', system-ui, sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  background: #1C1C1C;
+  color: #F7F4EE;
+  border: none;
+  border-radius: 3px;
+  padding: 7px 14px;
+  cursor: pointer;
+  width: 100%;
+  transition: background 0.2s;
+  margin-bottom: 6px;
+}
+
+.btn-skills:hover {
+  background: #8B1A1A;
+}
+
+.btn-add {
+  font-family: 'Source Sans 3', system-ui, sans-serif;
+  font-size: 0.82rem;
+  font-weight: 400;
+  background: none;
+  border: 1px dashed #AAA;
+  border-radius: 3px;
+  padding: 6px 14px;
+  width: 100%;
+  cursor: pointer;
+  color: #888;
+  transition: all 0.15s;
+}
+
+.btn-add:hover {
+  border-color: #1C1C1C;
+  color: #1C1C1C;
+}
+
+/* ── Formulaire ajout skill ── */
+
+.add-form {
+  display: flex;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.add-form input[type="text"] {
+  flex: 1;
+  font-family: 'Source Sans 3', system-ui, sans-serif;
+  font-size: 0.9rem;
+  padding: 6px 10px;
+  border: 1px solid #C8C3B8;
+  border-radius: 3px;
+  background: #FDFCF9;
+  outline: none;
+  color: #1C1C1C;
+}
+
+.add-form input[type="text"]:focus {
+  border-color: #8B1A1A;
+}
+
+.btn-validate {
+  font-family: 'Source Sans 3', system-ui, sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 6px 14px;
+  background: #8B1A1A;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.btn-validate:hover {
+  opacity: 0.85;
+}
+
+/* ── Overlay popup ── */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(28, 28, 28, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  backdrop-filter: blur(2px);
+}
+
+/* ── Popup ── */
+
+.popup {
+  background: #FDFCF9;
+  border: 1px solid #D8D3C8;
+  border-radius: 4px;
+  padding: 2rem;
+  width: 480px;
+  max-height: 80vh;
+  overflow-y: auto;
+  font-family: 'Source Sans 3', system-ui, sans-serif;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+}
+
+.popup-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid #E8E4DC;
+}
+
+.popup-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #1C1C1C;
+}
+
+.btn-close {
   background: none;
   border: none;
+  font-size: 1.1rem;
   cursor: pointer;
-  font-size: 18px;
+  color: #AAA;
   line-height: 1;
-  color: #aaa;
-  padding: 0;
   transition: color 0.2s;
 }
 
-.tag-delete:hover {
-  color: #d85a30;
+.btn-close:hover {
+  color: #1C1C1C;
+}
+
+/* ── Skill row dans la popup ── */
+
+.skill-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid #F0EDE6;
+}
+
+.skill-row:last-child {
+  border-bottom: none;
+}
+
+input[type="checkbox"] {
+  accent-color: #8B1A1A;
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+.skill-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.skill-label {
+  font-size: 0.92rem;
+  color: #1C1C1C;
+  line-height: 1.4;
+  cursor: pointer;
 }
 
 /* ── Tags projets dans SkillItem ── */
 
-.skill-projects {
-  display: block;
-  font-size: 11px;
-  color: #888;
+.skill-project-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.skill-project-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: #F0EDE6;
+  border: 1px solid #D8D3C8;
+  border-radius: 2px;
+  padding: 1px 7px;
+  font-size: 0.75rem;
+  color: #555;
+  font-style: italic;
+}
+
+.tag-remove {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+  color: #BBB;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.tag-remove:hover {
+  color: #8B1A1A;
+}
+
+.skill-project-select {
+  font-family: 'Source Sans 3', system-ui, sans-serif;
+  font-size: 0.75rem;
+  border: 1px dashed #BBB;
+  border-radius: 2px;
+  padding: 2px 6px;
+  background: none;
+  color: #AAA;
+  cursor: pointer;
+  width: fit-content;
+}
+
+.skill-project-select:focus {
+  outline: none;
+  border-color: #8B1A1A;
+  color: #1C1C1C;
+}
+
+.btn-delete {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: #CCC;
+  padding: 0;
+  transition: color 0.2s;
+  flex-shrink: 0;
   margin-top: 2px;
 }
 
-/* ── Cartes projets ── */
+.btn-delete:hover {
+  color: #8B1A1A;
+}
+
+/* ── Grille projets ── */
+
+.projects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* ── Carte projet ── */
 
 .project-card {
-  border-radius: 12px;
-  border: 3px solid #1a1a1a;
-  padding: 1.25rem;
-  box-shadow: 5px 5px 0px #1a1a1a;
+  background: #fff;
+  border: 1px solid #D8D3C8;
+  border-radius: 4px;
+  padding: 1.5rem;
+  transition: box-shadow 0.2s;
+}
+
+.project-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
 }
 
 .project-name {
-  font-size: 20px;
-  margin-bottom: 4px;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  color: #1C1C1C;
 }
 
 .project-description {
-  font-size: 13px;
-  color: #333;
-  margin-bottom: 10px;
+  font-size: 0.88rem;
+  color: #666;
+  margin-bottom: 0.8rem;
+  line-height: 1.5;
 }
 
 .project-status {
-  font-size: 14px;
-  margin-bottom: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 0.6rem;
+  color: #555;
 }
 
 .project-dates {
   display: flex;
   gap: 16px;
-  font-size: 13px;
-  color: #555;
-  margin-bottom: 12px;
+  font-size: 0.8rem;
+  color: #888;
+  margin-bottom: 1rem;
+  font-style: italic;
 }
 
 .card-actions {
   display: flex;
   gap: 8px;
+  border-top: 1px solid #F0EDE6;
+  padding-top: 0.8rem;
 }
 
 .btn-edit {
-  font-family: "Virgil", cursive;
-  font-size: 14px;
-  background: #1a1a1a;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 6px 12px;
+  font-family: 'Source Sans 3', system-ui, sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  background: none;
+  border: 1px solid #1C1C1C;
+  border-radius: 3px;
+  padding: 5px 12px;
   cursor: pointer;
-  transition: opacity 0.2s;
+  color: #1C1C1C;
+  transition: all 0.15s;
 }
 
 .btn-edit:hover {
-  opacity: 0.8;
+  background: #1C1C1C;
+  color: #F7F4EE;
 }
 
-/* ── Formulaire projet (création et édition) ── */
+/* ── Formulaire projet ── */
 
 .project-form {
   display: flex;
   flex-direction: column;
   gap: 10px;
   margin-top: 1.5rem;
+  background: #fff;
+  border: 1px solid #D8D3C8;
+  border-radius: 4px;
+  padding: 1.5rem;
 }
 
 .project-form input[type="text"],
 .project-form textarea,
 .project-form select {
-  font-family: "Virgil", cursive;
-  font-size: 14px;
+  font-family: 'Source Sans 3', system-ui, sans-serif;
+  font-size: 0.9rem;
   padding: 8px 10px;
-  border: 2px solid #1a1a1a;
-  border-radius: 8px;
-  background: #fafafa;
+  border: 1px solid #C8C3B8;
+  border-radius: 3px;
+  background: #FDFCF9;
   outline: none;
+  color: #1C1C1C;
   width: 100%;
+}
+
+.project-form input[type="text"]:focus,
+.project-form textarea:focus,
+.project-form select:focus {
+  border-color: #8B1A1A;
 }
 
 .project-form textarea {
   resize: vertical;
   min-height: 70px;
+  line-height: 1.5;
 }
 
 .form-dates {
@@ -476,96 +550,88 @@ input[type="checkbox"] {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  font-size: 13px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #777;
   flex: 1;
 }
 
 .form-dates input[type="date"] {
-  font-family: "Virgil", cursive;
-  font-size: 14px;
+  font-family: 'Source Sans 3', system-ui, sans-serif;
+  font-size: 0.9rem;
   padding: 7px 10px;
-  border: 2px solid #1a1a1a;
-  border-radius: 8px;
-  background: #fafafa;
+  border: 1px solid #C8C3B8;
+  border-radius: 3px;
+  background: #FDFCF9;
   outline: none;
   cursor: pointer;
+  color: #1C1C1C;
+}
+
+.form-dates input[type="date"]:focus {
+  border-color: #8B1A1A;
 }
 
 .form-actions {
   display: flex;
   gap: 8px;
+  margin-top: 4px;
 }
 
 .btn-cancel {
-  font-family: "Virgil", cursive;
-  font-size: 14px;
+  font-family: 'Source Sans 3', system-ui, sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
   background: none;
-  border: 2px solid #1a1a1a;
-  border-radius: 8px;
+  border: 1px solid #C8C3B8;
+  border-radius: 3px;
   padding: 6px 14px;
   cursor: pointer;
-  transition: background 0.2s;
+  color: #888;
+  transition: all 0.15s;
 }
 
 .btn-cancel:hover {
-  background: rgba(0, 0, 0, 0.07);
+  border-color: #1C1C1C;
+  color: #1C1C1C;
 }
 
-/* ── Tags projets dans SkillItem ── */
+/* ── Tags projets (vue Projets) ── */
 
-.skill-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.skill-project-tags {
+.project-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
+  gap: 8px;
+  margin-bottom: 1.5rem;
 }
 
-.skill-project-tag {
-  display: inline-flex;
+.project-tag {
+  display: flex;
   align-items: center;
-  gap: 4px;
-  background: rgba(0, 0, 0, 0.08);
-  border-radius: 99px;
-  padding: 2px 8px;
-  font-size: 11px;
+  gap: 5px;
+  background: #fff;
+  border: 1px solid #D8D3C8;
+  border-radius: 2px;
+  padding: 4px 12px;
+  font-size: 0.85rem;
   color: #444;
 }
 
-.tag-remove {
+.tag-delete {
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1;
-  color: #aaa;
+  color: #BBB;
   padding: 0;
   transition: color 0.2s;
 }
 
-.tag-remove:hover {
-  color: #d85a30;
-}
-
-.skill-project-select {
-  font-family: "Virgil", cursive;
-  font-size: 12px;
-  border: 1.5px dashed #aaa;
-  border-radius: 8px;
-  padding: 2px 6px;
-  background: none;
-  color: #888;
-  cursor: pointer;
-  width: fit-content;
-}
-
-.skill-project-select:focus {
-  outline: none;
-  border-color: #1a1a1a;
-  color: #1a1a1a;
+.tag-delete:hover {
+  color: #8B1A1A;
 }
