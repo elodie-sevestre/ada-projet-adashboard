@@ -2,14 +2,16 @@
 // Affiche une skill sous forme de ligne avec :
 //   - une checkbox pour basculer son statut validé/non validé (PATCH)
 //   - son libellé via un label associé (accessibilité)
-//   - les projets dans lesquels elle a été pratiquée
+//   - les projets associés sous forme de tags avec × pour dissocier
+//   - un select pour associer un nouveau projet
 //   - un bouton de suppression (DELETE)
 //
 // Props :
 //   - skill : objet skill (id, description, validated, projects)
+//   - allProjects : liste de tous les projets disponibles (pour le select)
 //   - onChange : callback appelé après chaque modification pour rafraîchir l'affichage
 
-function SkillItem({ skill, onChange }) {
+function SkillItem({ skill, allProjects = [], onChange }) {
 
   // Bascule le champ "validated" de la skill (true → false ou false → true)
   const handleValidated = async () => {
@@ -19,7 +21,7 @@ function SkillItem({ skill, onChange }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ validated: !skill.validated }),
       });
-      onChange(); // notifie le parent pour recharger la liste
+      onChange();
     } catch (err) {
       console.error("Erreur :", err);
     }
@@ -31,30 +33,100 @@ function SkillItem({ skill, onChange }) {
       await fetch(`http://localhost:3000/skills/${skill.id}`, {
         method: "DELETE",
       });
-      onChange(); // notifie le parent pour recharger la liste
+      onChange();
     } catch (err) {
       console.error("Erreur :", err);
     }
   };
 
+  // Associe un projet à la skill via POST /projects/:id/skills
+  const handleAddProject = async (e) => {
+    const projectId = e.target.value;
+    if (!projectId) return;
+    try {
+      await fetch(`http://localhost:3000/projects/${projectId}/skills`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ skill_id: skill.id }),
+      });
+      e.target.value = ""; // remet le select à l'état initial
+      onChange();
+    } catch (err) {
+      console.error("Erreur :", err);
+    }
+  };
+
+  // Dissocie un projet de la skill via DELETE /projects/:id/skills/:skillId
+  const handleRemoveProject = async (projectName) => {
+    // Retrouve l'id du projet depuis son nom
+    const project = allProjects.find((p) => p.name === projectName);
+    if (!project) return;
+    try {
+      await fetch(`http://localhost:3000/projects/${project.id}/skills/${skill.id}`, {
+        method: "DELETE",
+      });
+      onChange();
+    } catch (err) {
+      console.error("Erreur :", err);
+    }
+  };
+
+  // Projets déjà associés à cette skill
+  const associatedNames = skill.projects || [];
+
+  // Projets disponibles = tous les projets moins ceux déjà associés
+  const availableProjects = allProjects.filter(
+    (p) => !associatedNames.includes(p.name)
+  );
+
   return (
     <div className="skill-row">
-      {/* id dynamique pour lier la checkbox à son label (accessibilité) */}
+      {/* Checkbox liée au label pour l'accessibilité */}
       <input
         type="checkbox"
         id={`skill-${skill.id}`}
         checked={skill.validated}
         onChange={handleValidated}
       />
-      <label htmlFor={`skill-${skill.id}`}>
-        {skill.description}
-        {/* Affiche les projets associés si la skill a été pratiquée quelque part */}
-        {skill.projects && skill.projects.length > 0 && (
-          <span className="skill-projects">
-            {skill.projects.join(", ")}
-          </span>
+      <div className="skill-content">
+        <label htmlFor={`skill-${skill.id}`} className="skill-label">
+          {skill.description}
+        </label>
+
+        {/* Tags des projets associés */}
+        {associatedNames.length > 0 && (
+          <div className="skill-project-tags">
+            {associatedNames.map((name) => (
+              <span key={name} className="skill-project-tag">
+                {name}
+                <button
+                  className="tag-remove"
+                  onClick={() => handleRemoveProject(name)}
+                  aria-label={`Dissocier le projet ${name}`}
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
         )}
-      </label>
+
+        {/* Select pour associer un nouveau projet */}
+        {availableProjects.length > 0 && (
+          <select
+            className="skill-project-select"
+            defaultValue=""
+            onChange={handleAddProject}
+            aria-label="Associer un projet"
+          >
+            <option value="" disabled>+ projet...</option>
+            {availableProjects.map((p) => (
+              <option key={p.id} value={p.id}>{p.name}</option>
+            ))}
+          </select>
+        )}
+      </div>
+
       <button
         className="btn-delete"
         onClick={handleDelete}

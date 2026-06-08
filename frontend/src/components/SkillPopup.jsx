@@ -2,12 +2,16 @@
 // Affiche une popup modale listant toutes les skills d'une catégorie.
 // La popup se ferme en cliquant sur le bouton ✕ ou sur l'overlay.
 //
+// Récupère la liste de tous les projets au montage pour alimenter
+// le sélecteur d'association dans chaque SkillItem.
+//
 // Props :
 //   - category : objet catégorie (id, name)
 //   - skills : tableau de skills à afficher
 //   - onClose : callback pour fermer la popup
 //   - onChange : callback passé à chaque SkillItem pour rafraîchir après modification
 
+import { useState, useEffect } from "react";
 import SkillItem from "./SkillItem";
 
 // Même palette que CategoryCard pour cohérence visuelle
@@ -21,6 +25,22 @@ const CARD_COLORS = [
 ];
 
 function SkillPopup({ category, skills, onClose, onChange }) {
+  const [allProjects, setAllProjects] = useState([]);
+
+  // Récupère tous les projets au montage pour les passer aux SkillItems
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/projects");
+        const data = await response.json();
+        setAllProjects(data);
+      } catch (err) {
+        console.error("Erreur :", err);
+      }
+    };
+    fetchProjects();
+  }, []);
+
   return (
     // Clic sur l'overlay (fond sombre) ferme la popup
     // e.target === e.currentTarget vérifie qu'on clique bien sur l'overlay et pas sur son contenu
@@ -60,9 +80,14 @@ function SkillPopup({ category, skills, onClose, onChange }) {
           </p>
         )}
 
-        {/* Liste des skills */}
+        {/* Liste des skills — allProjects est passé pour alimenter le sélecteur */}
         {skills.map((skill) => (
-          <SkillItem key={skill.id} skill={skill} onChange={onChange} />
+          <SkillItem
+            key={skill.id}
+            skill={skill}
+            allProjects={allProjects}
+            onChange={onChange}
+          />
         ))}
       </div>
     </div>
