@@ -28,16 +28,30 @@ function SkillPopup({ project, skills, onClose, onChange }) {
       className="overlay"
       onClick={(e) => e.target === e.currentTarget && onClose()}
     >
+      {/* 
+      role="dialog" indique aux lecteurs d'écran que c'est une fenêtre modale
+      aria-modal="true" dit que le contenu derrière est inactif
+      aria-labelledby fait le lien entre la popup et son titre 
+      */}
       <div
         className="popup"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={`popup-title-${project.id}`}
         style={{
           borderTop: `6px solid ${CARD_COLORS[project.id % CARD_COLORS.length]}`,
         }}
       >
         <div className="popup-header">
-          <span className="popup-title">{project.name}</span>
-          <button className="btn-close" onClick={onClose}>
-            ✕
+          <span className="popup-title" id={`popup-title-${project.id}`}>
+            {project.name}
+          </span>
+          <button
+            className="btn-close"
+            onClick={onClose}
+            aria-label="Fermer la popup"
+          >
+            ✖️
           </button>
         </div>
 
