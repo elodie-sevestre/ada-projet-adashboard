@@ -1,9 +1,6 @@
 // ==================== Composant Projects ====================
 // Vue de gestion des projets.
 // Affiche les projets sous forme de cartes et permet d'en créer de nouveaux.
-//
-// Le state "refresh" force le rechargement de la liste
-// après une création, modification ou suppression.
 
 import { useState, useEffect } from "react";
 import ProjectCard from "./ProjectCard";
@@ -13,7 +10,6 @@ function Projects() {
   const [refresh, setRefresh] = useState(0);
   const [showForm, setShowForm] = useState(false);
 
-  // Formulaire de création — champs contrôlés
   const [newProject, setNewProject] = useState({
     name: "",
     description: "",
@@ -22,7 +18,6 @@ function Projects() {
     finished_at: "",
   });
 
-  // Récupère tous les projets depuis l'API
   const fetchProjects = async () => {
     try {
       const response = await fetch("http://localhost:3000/projects");
@@ -35,14 +30,12 @@ function Projects() {
 
   useEffect(() => {
     fetchProjects();
-  }, [refresh]); // se relance à chaque changement de "refresh"
+  }, [refresh]);
 
-  // Met à jour un champ du formulaire de création
   const handleNewChange = (e) => {
     setNewProject({ ...newProject, [e.target.name]: e.target.value });
   };
 
-  // Crée un nouveau projet via POST
   const handleAddProject = async () => {
     if (!newProject.name.trim()) return;
     try {
@@ -63,8 +56,12 @@ function Projects() {
     <>
       <h3>Projets</h3>
 
-      {/* Grille de cartes projets */}
-      <div className="projects-grid">
+      {/* aria-live annonce les ajouts/suppressions au lecteur d'écran */}
+      <div
+        className="projects-grid"
+        aria-live="polite"
+        aria-label="Liste des projets"
+      >
         {projects.map((project) => (
           <ProjectCard
             key={project.id}
@@ -74,40 +71,35 @@ function Projects() {
         ))}
       </div>
 
-      {/* Bouton pour afficher/masquer le formulaire de création */}
-      <button className="btn-add" onClick={() => setShowForm(!showForm)}>
+      <button
+        className="btn-add"
+        onClick={() => setShowForm(!showForm)}
+        aria-expanded={showForm}
+        aria-controls="new-project-form"
+      >
         + nouveau projet
       </button>
 
-      {/* Formulaire de création (conditionnel) */}
       {showForm && (
-        <div className="project-form">
-          <input
-            type="text"
-            name="name"
-            placeholder="Nom du projet"
-            value={newProject.name}
-            onChange={handleNewChange}
-          />
-          <textarea
-            name="description"
-            placeholder="Description"
-            value={newProject.description}
-            onChange={handleNewChange}
-          />
-          <select name="status" value={newProject.status} onChange={handleNewChange}>
+        <div className="project-form" id="new-project-form" role="form" aria-label="Créer un nouveau projet">
+          <label htmlFor="new-name">Nom du projet</label>
+          <input id="new-name" type="text" name="name" placeholder="Nom du projet" value={newProject.name} onChange={handleNewChange} />
+          <label htmlFor="new-description">Description</label>
+          <textarea id="new-description" name="description" placeholder="Description" value={newProject.description} onChange={handleNewChange} />
+          <label htmlFor="new-status">Statut</label>
+          <select id="new-status" name="status" value={newProject.status} onChange={handleNewChange}>
             <option value="à_initier">à initier</option>
             <option value="en_cours">en cours</option>
             <option value="terminé">terminé</option>
           </select>
           <div className="form-dates">
-            <label>
+            <label htmlFor="new-start">
               Début
-              <input type="date" name="started_at" value={newProject.started_at} onChange={handleNewChange} />
+              <input id="new-start" type="date" name="started_at" value={newProject.started_at} onChange={handleNewChange} />
             </label>
-            <label>
+            <label htmlFor="new-end">
               Fin
-              <input type="date" name="finished_at" value={newProject.finished_at} onChange={handleNewChange} />
+              <input id="new-end" type="date" name="finished_at" value={newProject.finished_at} onChange={handleNewChange} />
             </label>
           </div>
           <div className="form-actions">

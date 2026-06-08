@@ -9,25 +9,31 @@
 
 import { useState } from "react";
 
-// Couleurs associées aux statuts
+// Couleurs de fond associées aux statuts
 const STATUS_COLORS = {
   "à_initier": "#F0ECD4",
   "en_cours":  "#D6E8F0",
   "terminé":   "#D4ECD2",
 };
 
-// Emojis associés aux statuts
+// Emojis associés aux statuts (correction bug : contenait des couleurs hex)
 const STATUS_EMOJI = {
-  "à_initier": "#F0ECD4",
-  "en_cours":  "#D6E8F0",
-  "terminé":   "#D4ECD2",
+  "à_initier": "⚪",
+  "en_cours":  "🔵",
+  "terminé":   "🟢",
+};
+
+// Labels lisibles pour les lecteurs d'écran
+const STATUS_LABEL = {
+  "à_initier": "à initier",
+  "en_cours":  "en cours",
+  "terminé":   "terminé",
 };
 
 function ProjectCard({ project, onRefresh }) {
   const [editMode, setEditMode] = useState(false);
 
-  // Formulaire d'édition initialisé avec les valeurs du projet
-  // Les dates sont converties de DD-MM-YYYY vers YYYY-MM-DD pour l'input type="date"
+  // Convertit DD-MM-YYYY vers YYYY-MM-DD pour l'input type="date"
   const toInputDate = (str) => {
     if (!str) return "";
     const [d, m, y] = str.split("-");
@@ -42,12 +48,10 @@ function ProjectCard({ project, onRefresh }) {
     finished_at: toInputDate(project.finished_at),
   });
 
-  // Met à jour un champ du formulaire
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // Enregistre les modifications via PUT
   const handleSave = async () => {
     try {
       await fetch(`http://localhost:3000/projects/${project.id}`, {
@@ -62,7 +66,6 @@ function ProjectCard({ project, onRefresh }) {
     }
   };
 
-  // Supprime le projet via DELETE
   const handleDelete = async () => {
     try {
       await fetch(`http://localhost:3000/projects/${project.id}`, {
@@ -74,39 +77,48 @@ function ProjectCard({ project, onRefresh }) {
     }
   };
 
-  const cardColor = STATUS_COLORS[project.status] || "#f9f7f3";
+  const cardColor = STATUS_COLORS[project.status] || "#F7F4EE";
 
   // ── Mode édition ──
   if (editMode) {
     return (
-      <div className="project-card" style={{ backgroundColor: cardColor }}>
+      <article
+        className="project-card"
+        style={{ backgroundColor: cardColor }}
+        aria-label={`Modifier le projet ${project.name}`}
+      >
         <div className="project-form">
+          <label htmlFor={`name-${project.id}`} className="sr-only">Nom du projet</label>
           <input
+            id={`name-${project.id}`}
             type="text"
             name="name"
             value={form.name}
             onChange={handleChange}
             placeholder="Nom du projet"
           />
+          <label htmlFor={`desc-${project.id}`} className="sr-only">Description</label>
           <textarea
+            id={`desc-${project.id}`}
             name="description"
             value={form.description}
             onChange={handleChange}
             placeholder="Description"
           />
-          <select name="status" value={form.status} onChange={handleChange}>
+          <label htmlFor={`status-${project.id}`} className="sr-only">Statut</label>
+          <select id={`status-${project.id}`} name="status" value={form.status} onChange={handleChange}>
             <option value="à_initier">à initier</option>
             <option value="en_cours">en cours</option>
             <option value="terminé">terminé</option>
           </select>
           <div className="form-dates">
-            <label>
+            <label htmlFor={`start-${project.id}`}>
               Début
-              <input type="date" name="started_at" value={form.started_at} onChange={handleChange} />
+              <input id={`start-${project.id}`} type="date" name="started_at" value={form.started_at} onChange={handleChange} />
             </label>
-            <label>
+            <label htmlFor={`end-${project.id}`}>
               Fin
-              <input type="date" name="finished_at" value={form.finished_at} onChange={handleChange} />
+              <input id={`end-${project.id}`} type="date" name="finished_at" value={form.finished_at} onChange={handleChange} />
             </label>
           </div>
           <div className="form-actions">
@@ -114,26 +126,35 @@ function ProjectCard({ project, onRefresh }) {
             <button className="btn-cancel" onClick={() => setEditMode(false)}>Annuler</button>
           </div>
         </div>
-      </div>
+      </article>
     );
   }
 
   // ── Mode lecture ──
   return (
-    <div className="project-card" style={{ backgroundColor: cardColor }}>
+    <article
+      className="project-card"
+      style={{ backgroundColor: cardColor }}
+      aria-label={`Projet ${project.name}`}
+    >
       <p className="project-name">{project.name}</p>
       {project.description && (
         <p className="project-description">{project.description}</p>
       )}
-      <p className="project-status">
-        {STATUS_EMOJI[project.status]} {project.status}
+      <p className="project-status" aria-label={`Statut : ${STATUS_LABEL[project.status]}`}>
+        <span aria-hidden="true">{STATUS_EMOJI[project.status]}</span>{" "}
+        {STATUS_LABEL[project.status]}
       </p>
       <div className="project-dates">
         <span>Début : {project.started_at || "—"}</span>
         <span>Fin : {project.finished_at || "—"}</span>
       </div>
       <div className="card-actions">
-        <button className="btn-edit" onClick={() => setEditMode(true)}>
+        <button
+          className="btn-edit"
+          onClick={() => setEditMode(true)}
+          aria-label={`Modifier le projet ${project.name}`}
+        >
           ✏️ Modifier
         </button>
         <button
@@ -144,7 +165,7 @@ function ProjectCard({ project, onRefresh }) {
           🗑️
         </button>
       </div>
-    </div>
+    </article>
   );
 }
 

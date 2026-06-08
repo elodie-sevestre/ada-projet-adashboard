@@ -4,9 +4,6 @@
 //
 // Calcule également une progression globale en agrégeant
 // total_skills et validated_skills de toutes les catégories.
-//
-// Le state "refresh" est un compteur incrémenté par les composants enfants
-// pour forcer un rechargement de la liste (ex : après ajout d'une skill).
 
 import { useState, useEffect } from "react";
 import CategoryCard from "./CategoryCard";
@@ -28,41 +25,48 @@ function Categories() {
     fetchCategories();
   }, [refresh]);
 
-  // Calcul de la progression globale : somme de toutes les catégories
-  const totalSkills = categories.reduce(
-    (sum, c) => sum + parseInt(c.total_skills),
-    0,
-  );
-  const validatedSkills = categories.reduce(
-    (sum, c) => sum + parseInt(c.validated_skills),
-    0,
-  );
-  const globalPercentage =
-    totalSkills === 0 ? 0 : (validatedSkills / totalSkills) * 100;
+  const totalSkills = categories.reduce((sum, c) => sum + parseInt(c.total_skills), 0);
+  const validatedSkills = categories.reduce((sum, c) => sum + parseInt(c.validated_skills), 0);
+  const globalPercentage = totalSkills === 0 ? 0 : (validatedSkills / totalSkills) * 100;
 
   return (
     <>
       <h3>Compétences</h3>
 
-      {/* Barre de progression globale */}
       {totalSkills > 0 && (
         <div className="global-progress">
           <div className="global-progress-header">
             <span className="global-progress-label">Progression générale</span>
+            <span className="global-progress-detail">
+              {validatedSkills} / {totalSkills} compétences validées
+            </span>
           </div>
-          <div className="global-progress-track">
+          {/* role="progressbar" pour les lecteurs d'écran */}
+          <div
+            className="global-progress-track"
+            role="progressbar"
+            aria-valuenow={Math.round(globalPercentage)}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-label={`Progression générale : ${Math.round(globalPercentage)}%`}
+          >
             <div
               className="global-progress-fill"
               style={{ width: `${globalPercentage}%` }}
             />
           </div>
-          <span className="global-progress-pct">
+          <span className="global-progress-pct" aria-hidden="true">
             {globalPercentage.toFixed(0)}%
           </span>
         </div>
       )}
 
-      <div className="categories-grid">
+      {/* aria-live annonce les mises à jour au lecteur d'écran */}
+      <div
+        className="categories-grid"
+        aria-live="polite"
+        aria-label="Liste des catégories de compétences"
+      >
         {categories.map((category) => (
           <CategoryCard
             key={category.id}

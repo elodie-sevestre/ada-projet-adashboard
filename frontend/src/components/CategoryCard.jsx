@@ -28,16 +28,13 @@ function CategoryCard({ category, onRefresh }) {
   const [inputSkill, setInputSkill] = useState("");
   const [showForm, setShowForm] = useState(false);
 
-  // Couleur de la carte déterminée par l'id de la catégorie (modulo pour cyclage)
   const cardColor = CARD_COLORS[category.id % CARD_COLORS.length];
 
-  // Calcul du pourcentage de complétion (0 si aucune skill)
   const percentage =
     category.total_skills === 0
       ? 0
       : (category.validated_skills / category.total_skills) * 100;
 
-  // Récupère les skills de la catégorie depuis l'API
   const fetchSkills = async () => {
     try {
       const response = await fetch(
@@ -50,77 +47,90 @@ function CategoryCard({ category, onRefresh }) {
     }
   };
 
-  // Chargement des skills au montage du composant et si l'id de la catégorie change
   useEffect(() => {
     fetchSkills();
   }, [category.id]);
 
-  // Ajoute une nouvelle skill via POST, puis recharge les skills et la liste parente
   const handleAddSkill = async () => {
-    if (!inputSkill.trim()) return; // on n'envoie pas si le champ est vide
+    if (!inputSkill.trim()) return;
     try {
       await fetch("http://localhost:3000/skills/", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          description: inputSkill,
-          category_id: category.id,
-        }),
+        body: JSON.stringify({ description: inputSkill, category_id: category.id }),
       });
       setInputSkill("");
       setShowForm(false);
       await fetchSkills();
-      onRefresh(); // met à jour la progression dans la carte (total_skills / validated_skills)
+      onRefresh();
     } catch (err) {
       console.error("Erreur :", err);
     }
   };
 
-  // Callback passé à SkillPopup : recharge les skills locales et la liste parente
   const handleSkillChange = async () => {
     await fetchSkills();
     onRefresh();
   };
 
   return (
-    <div className="category-card" style={{ backgroundColor: cardColor }}>
+    <article
+      className="category-card"
+      style={{ backgroundColor: cardColor }}
+      aria-label={`Catégorie ${category.name}`}
+    >
       <p className="category-name">{category.name}</p>
 
-      {/* Barre de progression */}
-      <div className="progress-wrap">
+      {/* role="progressbar" avec valeurs min/max/now pour les lecteurs d'écran */}
+      <div
+        className="progress-wrap"
+        role="progressbar"
+        aria-valuenow={Math.round(percentage)}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={`Progression ${category.name} : ${Math.round(percentage)}%`}
+      >
         <div className="progress-track">
           <div className="progress-fill" style={{ width: `${percentage}%` }} />
         </div>
-        <span className="progress-pct">{percentage.toFixed(0)}%</span>
+        <span className="progress-pct" aria-hidden="true">
+          {percentage.toFixed(0)}%
+        </span>
       </div>
 
-      {/* Bouton d'ouverture de la popup des skills */}
-      <button className="btn-skills" onClick={() => setShowPopup(true)}>
+      <button
+        className="btn-skills"
+        onClick={() => setShowPopup(true)}
+        aria-haspopup="dialog"
+        aria-label={`Voir les compétences de la catégorie ${category.name}`}
+      >
         Voir les compétences
       </button>
 
-      {/* Bouton pour afficher/masquer le formulaire d'ajout de skill */}
-      <button className="btn-add" onClick={() => setShowForm(!showForm)}>
+      {/* aria-expanded indique si le formulaire est ouvert ou fermé */}
+      <button
+        className="btn-add"
+        onClick={() => setShowForm(!showForm)}
+        aria-expanded={showForm}
+        aria-controls={`add-form-${category.id}`}
+      >
         + je sais...
       </button>
 
-      {/* Formulaire d'ajout de skill (conditionnel) */}
       {showForm && (
-        <div className="add-form">
+        <div className="add-form" id={`add-form-${category.id}`}>
           <input
             type="text"
             placeholder="Je sais..."
             value={inputSkill}
             onChange={(e) => setInputSkill(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleAddSkill()}
+            aria-label="Décrire une nouvelle compétence"
           />
-          <button className="btn-validate" onClick={handleAddSkill}>
-            OK
-          </button>
+          <button className="btn-validate" onClick={handleAddSkill}>OK</button>
         </div>
       )}
 
-      {/* Popup de détail des skills (conditionnelle) */}
       {showPopup && (
         <SkillPopup
           category={category}
@@ -129,7 +139,7 @@ function CategoryCard({ category, onRefresh }) {
           onChange={handleSkillChange}
         />
       )}
-    </div>
+    </article>
   );
 }
 
