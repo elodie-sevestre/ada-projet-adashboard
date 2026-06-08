@@ -1,12 +1,12 @@
-// ==================== Composant ProjectCard ====================
-// Affiche une carte pour un projet donné.
+// ==================== Composant CategoryCard ====================
+// Affiche une carte pour une catégorie de compétences.
 // Gère :
-//   - l'affichage du nom, de la description et de la barre de progression
-//   - l'ajout d'une nouvelle skill via un formulaire inline
+//   - l'affichage du nom et de la barre de progression
+//   - l'ajout d'une nouvelle skill dans cette catégorie via un formulaire inline
 //   - l'ouverture de la popup de détail des skills (SkillPopup)
 //
 // Props :
-//   - project : objet projet (id, name, description, total_skills, validated_skills)
+//   - category : objet catégorie (id, name, total_skills, validated_skills)
 //   - onRefresh : callback pour forcer le rechargement de la liste parente
 
 import { useState, useEffect } from "react";
@@ -22,26 +22,26 @@ const CARD_COLORS = [
   "#FFD9A0",
 ];
 
-function ProjectCard({ project, onRefresh }) {
+function CategoryCard({ category, onRefresh }) {
   const [skills, setSkills] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [inputSkill, setInputSkill] = useState("");
   const [showForm, setShowForm] = useState(false);
 
-  // Couleur de la carte déterminée par l'id du projet (modulo pour cyclage)
-  const cardColor = CARD_COLORS[project.id % CARD_COLORS.length];
+  // Couleur de la carte déterminée par l'id de la catégorie (modulo pour cyclage)
+  const cardColor = CARD_COLORS[category.id % CARD_COLORS.length];
 
   // Calcul du pourcentage de complétion (0 si aucune skill)
   const percentage =
-    project.total_skills === 0
+    category.total_skills === 0
       ? 0
-      : (project.validated_skills / project.total_skills) * 100;
+      : (category.validated_skills / category.total_skills) * 100;
 
-  // Récupère les skills du projet depuis l'API
+  // Récupère les skills de la catégorie depuis l'API
   const fetchSkills = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3000/projects/${project.id}/skills`,
+        `http://localhost:3000/categories/${category.id}/skills`
       );
       const data = await response.json();
       setSkills(data);
@@ -50,10 +50,10 @@ function ProjectCard({ project, onRefresh }) {
     }
   };
 
-  // Chargement des skills au montage du composant et si l'id du projet change
+  // Chargement des skills au montage du composant et si l'id de la catégorie change
   useEffect(() => {
     fetchSkills();
-  }, [project.id]);
+  }, [category.id]);
 
   // Ajoute une nouvelle skill via POST, puis recharge les skills et la liste parente
   const handleAddSkill = async () => {
@@ -64,7 +64,7 @@ function ProjectCard({ project, onRefresh }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           description: inputSkill,
-          project_id: project.id,
+          category_id: category.id,
         }),
       });
       setInputSkill("");
@@ -83,9 +83,8 @@ function ProjectCard({ project, onRefresh }) {
   };
 
   return (
-    <div className="project-card" style={{ backgroundColor: cardColor }}>
-      <p className="project-name">{project.name}</p>
-      <p className="project-description">{project.description}</p>
+    <div className="category-card" style={{ backgroundColor: cardColor }}>
+      <p className="category-name">{category.name}</p>
 
       {/* Barre de progression */}
       <div className="progress-wrap">
@@ -124,7 +123,7 @@ function ProjectCard({ project, onRefresh }) {
       {/* Popup de détail des skills (conditionnelle) */}
       {showPopup && (
         <SkillPopup
-          project={project}
+          category={category}
           skills={skills}
           onClose={() => setShowPopup(false)}
           onChange={handleSkillChange}
@@ -134,4 +133,4 @@ function ProjectCard({ project, onRefresh }) {
   );
 }
 
-export default ProjectCard;
+export default CategoryCard;

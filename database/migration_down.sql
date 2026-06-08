@@ -1,5 +1,8 @@
--- migration_down.sql contient le SQL qui permet de supprimer toutes les tables (l'inverse de migration_up)
+-- ==================== Migration DOWN ====================
+-- Supprime toutes les tables dans l'ordre inverse des dépendances
 
+DROP TABLE IF EXISTS projects_skills;
 DROP TABLE IF EXISTS skills;
 DROP TABLE IF EXISTS projects;
+DROP TABLE IF EXISTS categories;
 DROP TYPE IF EXISTS status_type;

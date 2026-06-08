@@ -1,15 +1,15 @@
-// ==================== Composant Projects ====================
-// Récupère la liste de tous les projets depuis l'API
-// et les affiche sous forme de grille de cartes.
-
+// ==================== Composant Categories ====================
+// Récupère la liste de toutes les catégories depuis l'API
+// et les affiche sous forme de grille de cartes avec leur progression.
+//
 // Le state "refresh" est un compteur incrémenté par les composants enfants
 // pour forcer un rechargement de la liste (ex : après ajout d'une skill).
 
 import { useState, useEffect } from "react";
-import ProjectCard from "./ProjectCard";
+import CategoryCard from "./CategoryCard";
 
-function Projects() {
-  const [projects, setProjects] = useState([]);
+function Categories() {
+  const [categories, setCategories] = useState([]);
 
   // Compteur utilisé comme déclencheur de rechargement :
   // chaque fois qu'un enfant appelle onRefresh(), refresh s'incrémente
@@ -17,26 +17,26 @@ function Projects() {
   const [refresh, setRefresh] = useState(0);
 
   useEffect(() => {
-    const fetchProjects = async () => {
+    const fetchCategories = async () => {
       try {
-        const response = await fetch("http://localhost:3000/projects");
+        const response = await fetch("http://localhost:3000/categories");
         const data = await response.json();
-        setProjects(data);
+        setCategories(data);
       } catch (err) {
         console.error("Erreur :", err);
       }
     };
-    fetchProjects();
+    fetchCategories();
   }, [refresh]); // se relance à chaque changement de "refresh"
 
   return (
     <>
-      <h3>Projets</h3>
-      <div className="projects-grid">
-        {projects.map((project) => (
-          <ProjectCard
-            key={project.id}
-            project={project}
+      <h3>Compétences</h3>
+      <div className="categories-grid">
+        {categories.map((category) => (
+          <CategoryCard
+            key={category.id}
+            category={category}
             onRefresh={() => setRefresh((prev) => prev + 1)}
           />
         ))}
@@ -45,4 +45,4 @@ function Projects() {
   );
 }
 
-export default Projects;
+export default Categories;
