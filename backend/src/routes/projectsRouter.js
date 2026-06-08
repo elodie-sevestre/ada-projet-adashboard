@@ -43,7 +43,7 @@ projectsRouter.get("/:id", async (req, res) => {
 // GET /projects/:id/skills - Récupère toutes les skills d'un projet donné
 projectsRouter.get("/:id/skills", async (req, res) => {
   const { rows } = await pool.query(
-    "SELECT skills.id, skills.description, skills.validated FROM skills WHERE skills.project_id = $1",
+    "SELECT skills.id, skills.description, skills.validated FROM skills WHERE skills.project_id = $1 ORDER BY skills.id",
     [req.params.id],
   );
   res.json(rows);
