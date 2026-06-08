@@ -5,7 +5,7 @@
    Typographie : Georgia (sérif) pour titres, système pour corps
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Source+Sans+3:wght@300;400;600&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Source+Sans+3:wght@300;400;600&display=swap");
 
 * {
   box-sizing: border-box;
@@ -14,10 +14,10 @@
 }
 
 body {
-  font-family: 'Source Sans 3', system-ui, sans-serif;
+  font-family: "Source Sans 3", system-ui, sans-serif;
   font-weight: 400;
-  background-color: #F7F4EE;
-  color: #1C1C1C;
+  background-color: #f7f4ee;
+  color: #1c1c1c;
   padding: 2.5rem 3rem;
   max-width: 1200px;
   margin: 0 auto;
@@ -26,28 +26,28 @@ body {
 /* ── Typographie ── */
 
 h1 {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: "Playfair Display", Georgia, serif;
   font-size: 2.2rem;
   font-weight: 600;
   letter-spacing: -0.5px;
-  color: #1C1C1C;
+  color: #1c1c1c;
 }
 
 h2 {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: "Playfair Display", Georgia, serif;
   font-size: 1.3rem;
   font-weight: 400;
-  color: #1C1C1C;
+  color: #1c1c1c;
   margin-bottom: 1.5rem;
   padding-bottom: 0.4rem;
-  border-bottom: 1px solid #1C1C1C;
+  border-bottom: 1px solid #1c1c1c;
   text-transform: uppercase;
   letter-spacing: 2px;
   font-size: 0.85rem;
 }
 
 h3 {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: "Playfair Display", Georgia, serif;
   font-size: 1.1rem;
   font-weight: 400;
   color: #555;
@@ -63,7 +63,7 @@ h3 {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 2px solid #1C1C1C;
+  border-bottom: 2px solid #1c1c1c;
   padding-bottom: 1.2rem;
   margin-bottom: 2.5rem;
 }
@@ -79,13 +79,13 @@ h3 {
 .nav-tabs {
   display: flex;
   gap: 4px;
-  background: #E8E4DC;
+  background: #e8e4dc;
   border-radius: 6px;
   padding: 3px;
 }
 
 .nav-tab {
-  font-family: 'Source Sans 3', system-ui, sans-serif;
+  font-family: "Source Sans 3", system-ui, sans-serif;
   font-size: 0.85rem;
   font-weight: 600;
   letter-spacing: 1px;
@@ -100,12 +100,12 @@ h3 {
 }
 
 .nav-tab:hover {
-  color: #1C1C1C;
+  color: #1c1c1c;
 }
 
 .nav-tab.active {
-  background: #1C1C1C;
-  color: #F7F4EE;
+  background: #1c1c1c;
+  color: #f7f4ee;
 }
 
 /* ── Grille catégories ── */
@@ -120,23 +120,23 @@ h3 {
 
 .category-card {
   background: #fff;
-  border: 1px solid #D8D3C8;
+  border: 1px solid #d8d3c8;
   border-radius: 4px;
   padding: 1.5rem;
-  border-top: 3px solid #1C1C1C;
+  border-top: 3px solid #1c1c1c;
   transition: box-shadow 0.2s;
 }
 
 .category-card:hover {
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 .category-name {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: "Playfair Display", Georgia, serif;
   font-size: 1.15rem;
   font-weight: 600;
   margin-bottom: 1rem;
-  color: #1C1C1C;
+  color: #1c1c1c;
 }
 
 /* ── Barre de progression ── */
@@ -151,7 +151,7 @@ h3 {
 .progress-track {
   flex: 1;
   height: 5px;
-  background: #E8E4DC;
+  background: #e8e4dc;
   border-radius: 99px;
   overflow: hidden;
 }
@@ -159,14 +159,14 @@ h3 {
 .progress-fill {
   height: 100%;
   border-radius: 99px;
-  background: #8B1A1A;
+  background: #8b1a1a;
   transition: width 0.4s ease;
 }
 
 .progress-pct {
   font-size: 0.8rem;
   font-weight: 600;
-  color: #8B1A1A;
+  color: #8b1a1a;
   min-width: 36px;
   text-align: right;
   letter-spacing: 0.5px;
@@ -175,13 +175,13 @@ h3 {
 /* ── Boutons de la carte ── */
 
 .btn-skills {
-  font-family: 'Source Sans 3', system-ui, sans-serif;
+  font-family: "Source Sans 3", system-ui, sans-serif;
   font-size: 0.82rem;
   font-weight: 600;
   letter-spacing: 0.8px;
   text-transform: uppercase;
-  background: #1C1C1C;
-  color: #F7F4EE;
+  background: #1c1c1c;
+  color: #f7f4ee;
   border: none;
   border-radius: 3px;
   padding: 7px 14px;
@@ -192,15 +192,15 @@ h3 {
 }
 
 .btn-skills:hover {
-  background: #8B1A1A;
+  background: #8b1a1a;
 }
 
 .btn-add {
-  font-family: 'Source Sans 3', system-ui, sans-serif;
+  font-family: "Source Sans 3", system-ui, sans-serif;
   font-size: 0.82rem;
   font-weight: 400;
   background: none;
-  border: 1px dashed #AAA;
+  border: 1px dashed #aaa;
   border-radius: 3px;
   padding: 6px 14px;
   width: 100%;
@@ -210,8 +210,8 @@ h3 {
 }
 
 .btn-add:hover {
-  border-color: #1C1C1C;
-  color: #1C1C1C;
+  border-color: #1c1c1c;
+  color: #1c1c1c;
 }
 
 /* ── Formulaire ajout skill ── */
@@ -224,26 +224,26 @@ h3 {
 
 .add-form input[type="text"] {
   flex: 1;
-  font-family: 'Source Sans 3', system-ui, sans-serif;
+  font-family: "Source Sans 3", system-ui, sans-serif;
   font-size: 0.9rem;
   padding: 6px 10px;
-  border: 1px solid #C8C3B8;
+  border: 1px solid #c8c3b8;
   border-radius: 3px;
-  background: #FDFCF9;
+  background: #fdfcf9;
   outline: none;
-  color: #1C1C1C;
+  color: #1c1c1c;
 }
 
 .add-form input[type="text"]:focus {
-  border-color: #8B1A1A;
+  border-color: #8b1a1a;
 }
 
 .btn-validate {
-  font-family: 'Source Sans 3', system-ui, sans-serif;
+  font-family: "Source Sans 3", system-ui, sans-serif;
   font-size: 0.82rem;
   font-weight: 600;
   padding: 6px 14px;
-  background: #8B1A1A;
+  background: #8b1a1a;
   color: #fff;
   border: none;
   border-radius: 3px;
@@ -271,15 +271,15 @@ h3 {
 /* ── Popup ── */
 
 .popup {
-  background: #FDFCF9;
-  border: 1px solid #D8D3C8;
+  background: #fdfcf9;
+  border: 1px solid #d8d3c8;
   border-radius: 4px;
   padding: 2rem;
   width: 480px;
   max-height: 80vh;
   overflow-y: auto;
-  font-family: 'Source Sans 3', system-ui, sans-serif;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  font-family: "Source Sans 3", system-ui, sans-serif;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
 }
 
 .popup-header {
@@ -288,14 +288,14 @@ h3 {
   align-items: center;
   margin-bottom: 1.5rem;
   padding-bottom: 0.8rem;
-  border-bottom: 1px solid #E8E4DC;
+  border-bottom: 1px solid #e8e4dc;
 }
 
 .popup-title {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: "Playfair Display", Georgia, serif;
   font-size: 1.3rem;
   font-weight: 600;
-  color: #1C1C1C;
+  color: #1c1c1c;
 }
 
 .btn-close {
@@ -303,13 +303,13 @@ h3 {
   border: none;
   font-size: 1.1rem;
   cursor: pointer;
-  color: #AAA;
+  color: #aaa;
   line-height: 1;
   transition: color 0.2s;
 }
 
 .btn-close:hover {
-  color: #1C1C1C;
+  color: #1c1c1c;
 }
 
 /* ── Skill row dans la popup ── */
@@ -319,7 +319,7 @@ h3 {
   align-items: flex-start;
   gap: 10px;
   padding: 10px 0;
-  border-bottom: 1px solid #F0EDE6;
+  border-bottom: 1px solid #f0ede6;
 }
 
 .skill-row:last-child {
@@ -327,7 +327,7 @@ h3 {
 }
 
 input[type="checkbox"] {
-  accent-color: #8B1A1A;
+  accent-color: #8b1a1a;
   width: 15px;
   height: 15px;
   cursor: pointer;
@@ -344,7 +344,7 @@ input[type="checkbox"] {
 
 .skill-label {
   font-size: 0.92rem;
-  color: #1C1C1C;
+  color: #1c1c1c;
   line-height: 1.4;
   cursor: pointer;
 }
@@ -361,8 +361,8 @@ input[type="checkbox"] {
   display: inline-flex;
   align-items: center;
   gap: 3px;
-  background: #F0EDE6;
-  border: 1px solid #D8D3C8;
+  background: #f0ede6;
+  border: 1px solid #d8d3c8;
   border-radius: 2px;
   padding: 1px 7px;
   font-size: 0.75rem;
@@ -376,31 +376,31 @@ input[type="checkbox"] {
   cursor: pointer;
   font-size: 13px;
   line-height: 1;
-  color: #BBB;
+  color: #bbb;
   padding: 0;
   transition: color 0.2s;
 }
 
 .tag-remove:hover {
-  color: #8B1A1A;
+  color: #8b1a1a;
 }
 
 .skill-project-select {
-  font-family: 'Source Sans 3', system-ui, sans-serif;
+  font-family: "Source Sans 3", system-ui, sans-serif;
   font-size: 0.75rem;
-  border: 1px dashed #BBB;
+  border: 1px dashed #bbb;
   border-radius: 2px;
   padding: 2px 6px;
   background: none;
-  color: #AAA;
+  color: #aaa;
   cursor: pointer;
   width: fit-content;
 }
 
 .skill-project-select:focus {
   outline: none;
-  border-color: #8B1A1A;
-  color: #1C1C1C;
+  border-color: #8b1a1a;
+  color: #1c1c1c;
 }
 
 .btn-delete {
@@ -408,7 +408,7 @@ input[type="checkbox"] {
   border: none;
   cursor: pointer;
   font-size: 0.85rem;
-  color: #CCC;
+  color: #ccc;
   padding: 0;
   transition: color 0.2s;
   flex-shrink: 0;
@@ -416,7 +416,7 @@ input[type="checkbox"] {
 }
 
 .btn-delete:hover {
-  color: #8B1A1A;
+  color: #8b1a1a;
 }
 
 /* ── Grille projets ── */
@@ -432,22 +432,22 @@ input[type="checkbox"] {
 
 .project-card {
   background: #fff;
-  border: 1px solid #D8D3C8;
+  border: 1px solid #d8d3c8;
   border-radius: 4px;
   padding: 1.5rem;
   transition: box-shadow 0.2s;
 }
 
 .project-card:hover {
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
 .project-name {
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: "Playfair Display", Georgia, serif;
   font-size: 1.1rem;
   font-weight: 600;
   margin-bottom: 0.4rem;
-  color: #1C1C1C;
+  color: #1c1c1c;
 }
 
 .project-description {
@@ -478,28 +478,28 @@ input[type="checkbox"] {
 .card-actions {
   display: flex;
   gap: 8px;
-  border-top: 1px solid #F0EDE6;
+  border-top: 1px solid #f0ede6;
   padding-top: 0.8rem;
 }
 
 .btn-edit {
-  font-family: 'Source Sans 3', system-ui, sans-serif;
+  font-family: "Source Sans 3", system-ui, sans-serif;
   font-size: 0.8rem;
   font-weight: 600;
   letter-spacing: 0.5px;
   text-transform: uppercase;
   background: none;
-  border: 1px solid #1C1C1C;
+  border: 1px solid #1c1c1c;
   border-radius: 3px;
   padding: 5px 12px;
   cursor: pointer;
-  color: #1C1C1C;
+  color: #1c1c1c;
   transition: all 0.15s;
 }
 
 .btn-edit:hover {
-  background: #1C1C1C;
-  color: #F7F4EE;
+  background: #1c1c1c;
+  color: #f7f4ee;
 }
 
 /* ── Formulaire projet ── */
@@ -510,7 +510,7 @@ input[type="checkbox"] {
   gap: 10px;
   margin-top: 1.5rem;
   background: #fff;
-  border: 1px solid #D8D3C8;
+  border: 1px solid #d8d3c8;
   border-radius: 4px;
   padding: 1.5rem;
 }
@@ -518,21 +518,21 @@ input[type="checkbox"] {
 .project-form input[type="text"],
 .project-form textarea,
 .project-form select {
-  font-family: 'Source Sans 3', system-ui, sans-serif;
+  font-family: "Source Sans 3", system-ui, sans-serif;
   font-size: 0.9rem;
   padding: 8px 10px;
-  border: 1px solid #C8C3B8;
+  border: 1px solid #c8c3b8;
   border-radius: 3px;
-  background: #FDFCF9;
+  background: #fdfcf9;
   outline: none;
-  color: #1C1C1C;
+  color: #1c1c1c;
   width: 100%;
 }
 
 .project-form input[type="text"]:focus,
 .project-form textarea:focus,
 .project-form select:focus {
-  border-color: #8B1A1A;
+  border-color: #8b1a1a;
 }
 
 .project-form textarea {
@@ -559,19 +559,19 @@ input[type="checkbox"] {
 }
 
 .form-dates input[type="date"] {
-  font-family: 'Source Sans 3', system-ui, sans-serif;
+  font-family: "Source Sans 3", system-ui, sans-serif;
   font-size: 0.9rem;
   padding: 7px 10px;
-  border: 1px solid #C8C3B8;
+  border: 1px solid #c8c3b8;
   border-radius: 3px;
-  background: #FDFCF9;
+  background: #fdfcf9;
   outline: none;
   cursor: pointer;
-  color: #1C1C1C;
+  color: #1c1c1c;
 }
 
 .form-dates input[type="date"]:focus {
-  border-color: #8B1A1A;
+  border-color: #8b1a1a;
 }
 
 .form-actions {
@@ -581,13 +581,13 @@ input[type="checkbox"] {
 }
 
 .btn-cancel {
-  font-family: 'Source Sans 3', system-ui, sans-serif;
+  font-family: "Source Sans 3", system-ui, sans-serif;
   font-size: 0.8rem;
   font-weight: 600;
   letter-spacing: 0.5px;
   text-transform: uppercase;
   background: none;
-  border: 1px solid #C8C3B8;
+  border: 1px solid #c8c3b8;
   border-radius: 3px;
   padding: 6px 14px;
   cursor: pointer;
@@ -596,8 +596,8 @@ input[type="checkbox"] {
 }
 
 .btn-cancel:hover {
-  border-color: #1C1C1C;
-  color: #1C1C1C;
+  border-color: #1c1c1c;
+  color: #1c1c1c;
 }
 
 /* ── Tags projets (vue Projets) ── */
@@ -614,7 +614,7 @@ input[type="checkbox"] {
   align-items: center;
   gap: 5px;
   background: #fff;
-  border: 1px solid #D8D3C8;
+  border: 1px solid #d8d3c8;
   border-radius: 2px;
   padding: 4px 12px;
   font-size: 0.85rem;
@@ -627,11 +627,67 @@ input[type="checkbox"] {
   cursor: pointer;
   font-size: 16px;
   line-height: 1;
-  color: #BBB;
+  color: #bbb;
   padding: 0;
   transition: color 0.2s;
 }
 
 .tag-delete:hover {
-  color: #8B1A1A;
+  color: #8b1a1a;
+}
+
+/* ── Barre de progression globale ── */
+
+.global-progress {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #fff;
+  border: 1px solid #d8d3c8;
+  border-radius: 4px;
+  padding: 1.2rem 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.global-progress-header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 200px;
+}
+
+.global-progress-label {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1c1c1c;
+}
+
+.global-progress-detail {
+  font-size: 0.78rem;
+  color: #888;
+  font-style: italic;
+}
+
+.global-progress-track {
+  flex: 1;
+  height: 8px;
+  background: #e8e4dc;
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.global-progress-fill {
+  height: 100%;
+  border-radius: 99px;
+  background: #8b1a1a;
+  transition: width 0.6s ease;
+}
+
+.global-progress-pct {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #8b1a1a;
+  min-width: 42px;
+  text-align: right;
 }
