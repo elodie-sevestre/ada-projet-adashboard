@@ -1,11 +1,16 @@
-// ==================== Table : projects ====================
+// ==================== Routes : projects ====================
+// Ce routeur gère les opérations CRUD sur la table "projects".
+// Il expose également une route imbriquée pour récupérer
+// les skills associées à un projet donné.
 
 import express from "express";
 import pool from "../db.js";
 
 export const projectsRouter = express.Router();
 
-// GET - récupérer tous les projets avec progression des skills
+// GET /projects - Récupère tous les projets
+// Inclut le nombre total de skills et le nombre de skills validées
+// (utilisé pour calculer la barre de progression côté frontend)
 projectsRouter.get("/", async (req, res) => {
   const { rows } = await pool.query(
     `SELECT 
@@ -26,7 +31,7 @@ projectsRouter.get("/", async (req, res) => {
   res.json(rows);
 });
 
-// GET /:id - récupérer un projet par son id
+// GET /projects/:id - Récupère un projet par son id
 projectsRouter.get("/:id", async (req, res) => {
   const { rows } = await pool.query(
     "SELECT id, name, description, status, TO_CHAR(started_at, 'DD-MM-YYYY') AS started_at , TO_CHAR(finished_at, 'DD-MM-YYYY') AS finished_at , TO_CHAR(created_at, 'DD-MM-YYYY') AS created_at , TO_CHAR(updated_at, 'DD-MM-YYYY') AS updated_at FROM projects WHERE id = $1",
@@ -35,7 +40,7 @@ projectsRouter.get("/:id", async (req, res) => {
   res.json(rows[0]);
 });
 
-// GET /:id/skills - récupérer les skills d'un projet
+// GET /projects/:id/skills - Récupère toutes les skills d'un projet donné
 projectsRouter.get("/:id/skills", async (req, res) => {
   const { rows } = await pool.query(
     "SELECT skills.id, skills.description, skills.validated FROM skills WHERE skills.project_id = $1",
@@ -44,7 +49,8 @@ projectsRouter.get("/:id/skills", async (req, res) => {
   res.json(rows);
 });
 
-// POST - insérer un nouveau projet
+// POST /projects - Crée un nouveau projet
+// Attend dans le body : { name, description }
 projectsRouter.post("/", async (req, res) => {
   const insertNewProject = await pool.query(
     "INSERT INTO projects (name, description) VALUES ($1, $2) RETURNING *",
@@ -53,7 +59,8 @@ projectsRouter.post("/", async (req, res) => {
   res.status(201).json(insertNewProject.rows[0]);
 });
 
-// PUT /:id - modifier un projet par son id
+// PUT /projects/:id - Met à jour un projet existant
+// Attend dans le body : { name, description, status, started_at, finished_at }
 projectsRouter.put("/:id", async (req, res) => {
   const updateProject = await pool.query(
     "UPDATE projects SET name = $1, description = $2, status = $3, started_at = $4, finished_at = $5, updated_at = NOW() WHERE id = $6 RETURNING *",
@@ -69,7 +76,7 @@ projectsRouter.put("/:id", async (req, res) => {
   res.json(updateProject.rows[0]);
 });
 
-// DELETE /:id - supprimer un projet par son id
+// DELETE /projects/:id - Supprime un projet par son id
 projectsRouter.delete("/:id", async (req, res) => {
   const deleteProjects = await pool.query(
     "DELETE FROM projects WHERE id=$1 RETURNING *",

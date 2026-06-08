@@ -1,6 +1,18 @@
+// ==================== Composant ProjectCard ====================
+// Affiche une carte pour un projet donné.
+// Gère :
+//   - l'affichage du nom, de la description et de la barre de progression
+//   - l'ajout d'une nouvelle skill via un formulaire inline
+//   - l'ouverture de la popup de détail des skills (SkillPopup)
+//
+// Props :
+//   - project : objet projet (id, name, description, total_skills, validated_skills)
+//   - onRefresh : callback pour forcer le rechargement de la liste parente
+
 import { useState, useEffect } from "react";
 import SkillPopup from "./SkillPopup";
 
+// Palette de couleurs cycliques pour différencier visuellement les cartes
 const CARD_COLORS = [
   "#AEE2FF",
   "#FFD6E7",
@@ -16,13 +28,16 @@ function ProjectCard({ project, onRefresh }) {
   const [inputSkill, setInputSkill] = useState("");
   const [showForm, setShowForm] = useState(false);
 
+  // Couleur de la carte déterminée par l'id du projet (modulo pour cyclage)
   const cardColor = CARD_COLORS[project.id % CARD_COLORS.length];
 
+  // Calcul du pourcentage de complétion (0 si aucune skill)
   const percentage =
     project.total_skills === 0
       ? 0
       : (project.validated_skills / project.total_skills) * 100;
 
+  // Récupère les skills du projet depuis l'API
   const fetchSkills = async () => {
     try {
       const response = await fetch(
@@ -35,12 +50,14 @@ function ProjectCard({ project, onRefresh }) {
     }
   };
 
+  // Chargement des skills au montage du composant et si l'id du projet change
   useEffect(() => {
     fetchSkills();
   }, [project.id]);
 
+  // Ajoute une nouvelle skill via POST, puis recharge les skills et la liste parente
   const handleAddSkill = async () => {
-    if (!inputSkill.trim()) return;
+    if (!inputSkill.trim()) return; // on n'envoie pas si le champ est vide
     try {
       await fetch("http://localhost:3000/skills/", {
         method: "POST",
@@ -53,12 +70,13 @@ function ProjectCard({ project, onRefresh }) {
       setInputSkill("");
       setShowForm(false);
       await fetchSkills();
-      onRefresh();
+      onRefresh(); // met à jour la progression dans la carte (total_skills / validated_skills)
     } catch (err) {
       console.error("Erreur :", err);
     }
   };
 
+  // Callback passé à SkillPopup : recharge les skills locales et la liste parente
   const handleSkillChange = async () => {
     await fetchSkills();
     onRefresh();
@@ -69,6 +87,7 @@ function ProjectCard({ project, onRefresh }) {
       <p className="project-name">{project.name}</p>
       <p className="project-description">{project.description}</p>
 
+      {/* Barre de progression */}
       <div className="progress-wrap">
         <div className="progress-track">
           <div className="progress-fill" style={{ width: `${percentage}%` }} />
@@ -76,14 +95,17 @@ function ProjectCard({ project, onRefresh }) {
         <span className="progress-pct">{percentage.toFixed(0)}%</span>
       </div>
 
+      {/* Bouton d'ouverture de la popup des skills */}
       <button className="btn-skills" onClick={() => setShowPopup(true)}>
         Voir les compétences
       </button>
 
+      {/* Bouton pour afficher/masquer le formulaire d'ajout de skill */}
       <button className="btn-add" onClick={() => setShowForm(!showForm)}>
         + je sais...
       </button>
 
+      {/* Formulaire d'ajout de skill (conditionnel) */}
       {showForm && (
         <div className="add-form">
           <input
@@ -99,6 +121,7 @@ function ProjectCard({ project, onRefresh }) {
         </div>
       )}
 
+      {/* Popup de détail des skills (conditionnelle) */}
       {showPopup && (
         <SkillPopup
           project={project}

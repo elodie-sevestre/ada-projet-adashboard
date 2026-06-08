@@ -1,10 +1,15 @@
-// on importe les modules nécessaires
-// on initialise dotenv pour lire le fichier .env
-import dotenv from "dotenv";
+// ==================== Connexion à la base de données ====================
+// Ce module crée et exporte un pool de connexions PostgreSQL.
+// Un "pool" permet de réutiliser plusieurs connexions simultanées
+// plutôt que d'en ouvrir une nouvelle à chaque requête.
+
 import { Pool } from "pg";
-// on crée une instance d'express
+
+// Initialise et charge les variables d'environnement depuis le fichier .env
+import dotenv from "dotenv";
 dotenv.config();
-// on configure la connexion à la bdd avec les variables d'environnement
+
+// Création du pool avec les paramètres de connexion issus du .env
 const pool = new Pool({
   user: process.env.POSTGRES_USER,
   host: "localhost",
@@ -13,7 +18,7 @@ const pool = new Pool({
   port: process.env.POSTGRES_PORT,
 });
 
-// on tente de se connecter à la bdd et on affiche un message en fonction du résultat
+// Test de connexion au démarrage : affiche un message selon le résultat
 pool
   .connect()
   .then(() => {
@@ -22,4 +27,5 @@ pool
   .catch((err) => {
     console.error("🔴 Error connecting to the database", err);
   });
+
 export default pool;

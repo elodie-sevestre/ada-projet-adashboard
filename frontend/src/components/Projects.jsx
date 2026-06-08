@@ -1,8 +1,19 @@
+// ==================== Composant Projects ====================
+// Récupère la liste de tous les projets depuis l'API
+// et les affiche sous forme de grille de cartes.
+
+// Le state "refresh" est un compteur incrémenté par les composants enfants
+// pour forcer un rechargement de la liste (ex : après ajout d'une skill).
+
 import { useState, useEffect } from "react";
 import ProjectCard from "./ProjectCard";
 
 function Projects() {
   const [projects, setProjects] = useState([]);
+
+  // Compteur utilisé comme déclencheur de rechargement :
+  // chaque fois qu'un enfant appelle onRefresh(), refresh s'incrémente
+  // ce qui relance le useEffect
   const [refresh, setRefresh] = useState(0);
 
   useEffect(() => {
@@ -16,7 +27,7 @@ function Projects() {
       }
     };
     fetchProjects();
-  }, [refresh]);
+  }, [refresh]); // se relance à chaque changement de "refresh"
 
   return (
     <>
