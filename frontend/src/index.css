@@ -741,3 +741,61 @@ input[type="checkbox"] {
   color: #888;
   font-style: italic;
 }
+
+/* ── Formulaire global ajout compétence ── */
+
+.add-skill-global {
+  margin-bottom: 1.5rem;
+}
+
+.add-skill-global-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 0.75rem;
+  background: #fff;
+  border: 1px solid #d8d3c8;
+  border-radius: 4px;
+  padding: 1.25rem 1.5rem;
+  max-width: 480px;
+}
+
+.add-skill-global-fields {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 8px 12px;
+}
+
+.add-skill-global-fields label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #555;
+  white-space: nowrap;
+}
+
+.add-skill-global-fields select,
+.add-skill-global-fields input[type="text"] {
+  font-family: "Source Sans 3", system-ui, sans-serif;
+  font-size: 0.88rem;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  padding: 5px 8px;
+  background: #faf9f6;
+  color: #1c1c1c;
+  width: 100%;
+}
+
+.add-skill-global-fields select:focus,
+.add-skill-global-fields input[type="text"]:focus {
+  outline: none;
+  border-color: #1c1c1c;
+}
+
+.add-skill-global-error {
+  font-size: 0.82rem;
+  color: #8b1a1a;
+  margin: 0;
+}

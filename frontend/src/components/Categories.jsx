@@ -8,6 +8,7 @@
 import { useState, useEffect } from "react";
 import { API_URL } from "../api";
 import CategoryCard from "./CategoryCard";
+import AddSkillForm from "./AddSkillForm";
 
 function Categories() {
   const [categories, setCategories] = useState([]);
@@ -61,6 +62,12 @@ function Categories() {
           </span>
         </div>
       )}
+
+      {/* Formulaire global d'ajout d'une compétence */}
+      <AddSkillForm
+        categories={categories}
+        onSuccess={() => setRefresh((prev) => prev + 1)}
+      />
 
       {/* aria-live annonce les mises à jour au lecteur d'écran */}
       <div
