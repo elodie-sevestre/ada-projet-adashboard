@@ -2,6 +2,8 @@
 // Vue kanban des projets organisés en trois colonnes par statut.
 // Le drag & drop (via @dnd-kit) permet de déplacer une carte
 // d'une colonne à l'autre, ce qui met à jour le statut en base via PUT.
+//
+// Gère les états de chargement et d'erreur visibles à l'utilisateur.
 
 import { useState, useEffect } from "react";
 import { API_URL } from "../api";
@@ -26,7 +28,9 @@ function Projects() {
   const [projects, setProjects] = useState([]);
   const [refresh, setRefresh] = useState(0);
   const [showForm, setShowForm] = useState(false);
-  const [activeProject, setActiveProject] = useState(null); // carte en cours de drag
+  const [activeProject, setActiveProject] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
 
   const [newProject, setNewProject] = useState({
     name: "",
@@ -37,12 +41,17 @@ function Projects() {
   });
 
   const fetchProjects = async () => {
+    setIsLoading(true);
+    setError("");
     try {
       const response = await fetch(`${API_URL}/projects`);
       const data = await response.json();
       setProjects(data);
     } catch (err) {
       console.error("Erreur :", err);
+      setError("Impossible de charger les projets. Vérifiez que le serveur est démarré.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -126,71 +135,83 @@ function Projects() {
     <>
       <h3>Projets</h3>
 
-      <DndContext
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragStart={handleDragStart}
-        onDragEnd={handleDragEnd}
-      >
-        <div className="kanban-board" aria-label="Tableau kanban des projets">
-          {COLUMNS.map((col) => (
-            <KanbanColumn
-              key={col.id}
-              column={col}
-              projects={projects.filter((p) => p.status === col.id)}
-              onRefresh={() => setRefresh((prev) => prev + 1)}
-            />
-          ))}
-        </div>
+      {isLoading && (
+        <p className="state-message">Chargement...</p>
+      )}
 
-        {/* Carte fantôme affichée sous le curseur pendant le drag */}
-        <DragOverlay>
-          {activeProject ? (
-            <ProjectCard
-              project={activeProject}
-              onRefresh={() => {}}
-              isDragging
-            />
-          ) : null}
-        </DragOverlay>
-      </DndContext>
+      {error && (
+        <p className="state-message state-message--error" role="alert">{error}</p>
+      )}
 
-      <button
-        className="btn-add"
-        onClick={() => setShowForm(!showForm)}
-        aria-expanded={showForm}
-        aria-controls="new-project-form"
-      >
-        + nouveau projet
-      </button>
+      {!isLoading && !error && (
+        <>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
+          >
+            <div className="kanban-board" aria-label="Tableau kanban des projets">
+              {COLUMNS.map((col) => (
+                <KanbanColumn
+                  key={col.id}
+                  column={col}
+                  projects={projects.filter((p) => p.status === col.id)}
+                  onRefresh={() => setRefresh((prev) => prev + 1)}
+                />
+              ))}
+            </div>
 
-      {showForm && (
-        <div className="project-form" id="new-project-form" role="form" aria-label="Créer un nouveau projet">
-          <label htmlFor="new-name">Nom du projet</label>
-          <input id="new-name" type="text" name="name" placeholder="Nom du projet" value={newProject.name} onChange={handleNewChange} />
-          <label htmlFor="new-description">Description</label>
-          <textarea id="new-description" name="description" placeholder="Description" value={newProject.description} onChange={handleNewChange} />
-          <label htmlFor="new-status">Statut</label>
-          <select id="new-status" name="status" value={newProject.status} onChange={handleNewChange}>
-            <option value="TODO">À faire</option>
-            <option value="IN_PROGRESS">En cours</option>
-            <option value="DONE">Terminé</option>
-          </select>
-          <div className="form-dates">
-            <label htmlFor="new-start">
-              Début
-              <input id="new-start" type="date" name="started_at" value={newProject.started_at} onChange={handleNewChange} />
-            </label>
-            <label htmlFor="new-end">
-              Fin
-              <input id="new-end" type="date" name="finished_at" value={newProject.finished_at} onChange={handleNewChange} />
-            </label>
-          </div>
-          <div className="form-actions">
-            <button className="btn-validate" onClick={handleAddProject}>Créer</button>
-            <button className="btn-cancel" onClick={() => setShowForm(false)}>Annuler</button>
-          </div>
-        </div>
+            {/* Carte fantôme affichée sous le curseur pendant le drag */}
+            <DragOverlay>
+              {activeProject ? (
+                <ProjectCard
+                  project={activeProject}
+                  onRefresh={() => {}}
+                  isDragging
+                />
+              ) : null}
+            </DragOverlay>
+          </DndContext>
+
+          <button
+            className="btn-add"
+            onClick={() => setShowForm(!showForm)}
+            aria-expanded={showForm}
+            aria-controls="new-project-form"
+          >
+            + nouveau projet
+          </button>
+
+          {showForm && (
+            <div className="project-form" id="new-project-form" role="form" aria-label="Créer un nouveau projet">
+              <label htmlFor="new-name">Nom du projet</label>
+              <input id="new-name" type="text" name="name" placeholder="Nom du projet" value={newProject.name} onChange={handleNewChange} />
+              <label htmlFor="new-description">Description</label>
+              <textarea id="new-description" name="description" placeholder="Description" value={newProject.description} onChange={handleNewChange} />
+              <label htmlFor="new-status">Statut</label>
+              <select id="new-status" name="status" value={newProject.status} onChange={handleNewChange}>
+                <option value="TODO">À faire</option>
+                <option value="IN_PROGRESS">En cours</option>
+                <option value="DONE">Terminé</option>
+              </select>
+              <div className="form-dates">
+                <label htmlFor="new-start">
+                  Début
+                  <input id="new-start" type="date" name="started_at" value={newProject.started_at} onChange={handleNewChange} />
+                </label>
+                <label htmlFor="new-end">
+                  Fin
+                  <input id="new-end" type="date" name="finished_at" value={newProject.finished_at} onChange={handleNewChange} />
+                </label>
+              </div>
+              <div className="form-actions">
+                <button className="btn-validate" onClick={handleAddProject}>Créer</button>
+                <button className="btn-cancel" onClick={() => setShowForm(false)}>Annuler</button>
+              </div>
+            </div>
+          )}
+        </>
       )}
     </>
   );

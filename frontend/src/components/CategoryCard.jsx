@@ -13,20 +13,12 @@
 
 import { useState, useEffect } from "react";
 import { API_URL } from "../api";
+import { CARD_COLORS } from "../constants";
 import SkillPopup from "./SkillPopup";
-
-// Palette de couleurs désaturées harmonisée avec le thème revue scientifique
-const CARD_COLORS = [
-  "#D6E8F0",
-  "#F0DDE6",
-  "#D4ECD2",
-  "#F0ECD4",
-  "#E4D8EE",
-  "#EFE0C8",
-];
 
 function CategoryCard({ category, onRefresh }) {
   const [skills, setSkills] = useState([]);
+  const [allProjects, setAllProjects] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [inputSkill, setInputSkill] = useState("");
   const [showForm, setShowForm] = useState(false);
@@ -54,8 +46,21 @@ function CategoryCard({ category, onRefresh }) {
     }
   };
 
+  // Charge les projets une seule fois au montage pour les passer à SkillPopup
+  // (évite un fetch redondant à chaque ouverture de popup)
+  const fetchProjects = async () => {
+    try {
+      const response = await fetch(`${API_URL}/projects`);
+      const data = await response.json();
+      setAllProjects(data);
+    } catch (err) {
+      console.error("Erreur :", err);
+    }
+  };
+
   useEffect(() => {
     fetchSkills();
+    fetchProjects();
   }, [category.id]);
 
   const handleAddSkill = async () => {
@@ -219,6 +224,7 @@ function CategoryCard({ category, onRefresh }) {
         <SkillPopup
           category={category}
           skills={skills}
+          allProjects={allProjects}
           onClose={() => setShowPopup(false)}
           onChange={handleSkillChange}
         />

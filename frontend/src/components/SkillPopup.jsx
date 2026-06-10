@@ -2,46 +2,20 @@
 // Affiche une popup modale listant toutes les skills d'une catégorie.
 // La popup se ferme en cliquant sur le bouton ✕ ou sur l'overlay.
 //
-// Récupère la liste de tous les projets au montage pour alimenter
-// le sélecteur d'association dans chaque SkillItem.
+// La liste des projets (pour le sélecteur d'association) est reçue via props
+// depuis CategoryCard qui la détient déjà — pas de fetch redondant.
 //
 // Props :
-//   - category : objet catégorie (id, name)
-//   - skills : tableau de skills à afficher
-//   - onClose : callback pour fermer la popup
-//   - onChange : callback passé à chaque SkillItem pour rafraîchir après modification
+//   - category    : objet catégorie (id, name)
+//   - skills      : tableau de skills à afficher
+//   - allProjects : liste de tous les projets (pour le sélecteur dans SkillItem)
+//   - onClose     : callback pour fermer la popup
+//   - onChange    : callback passé à chaque SkillItem pour rafraîchir après modification
 
-import { useState, useEffect } from "react";
-import { API_URL } from "../api";
+import { CARD_COLORS } from "../constants";
 import SkillItem from "./SkillItem";
 
-// Même palette que CategoryCard pour cohérence visuelle
-const CARD_COLORS = [
-  "#D6E8F0",
-  "#F0DDE6",
-  "#D4ECD2",
-  "#F0ECD4",
-  "#E4D8EE",
-  "#EFE0C8",
-];
-
-function SkillPopup({ category, skills, onClose, onChange }) {
-  const [allProjects, setAllProjects] = useState([]);
-
-  // Récupère tous les projets au montage pour les passer aux SkillItems
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const response = await fetch(`${API_URL}/projects`);
-        const data = await response.json();
-        setAllProjects(data);
-      } catch (err) {
-        console.error("Erreur :", err);
-      }
-    };
-    fetchProjects();
-  }, []);
-
+function SkillPopup({ category, skills, allProjects = [], onClose, onChange }) {
   return (
     // Clic sur l'overlay (fond sombre) ferme la popup
     // e.target === e.currentTarget vérifie qu'on clique bien sur l'overlay et pas sur son contenu
