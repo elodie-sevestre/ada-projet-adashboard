@@ -8,22 +8,21 @@
 //   - la suppression de la catégorie (avec confirmation, cascade sur les skills)
 //
 // Props :
-//   - category : objet catégorie (id, name, total_skills, validated_skills)
-//   - onRefresh : callback pour forcer le rechargement de la liste parente
+//   - category    : objet catégorie (id, name, total_skills, validated_skills)
+//   - allProjects : liste des projets chargée par le parent (Categories)
+//   - onRefresh   : callback pour forcer le rechargement de la liste parente
+//   - onError     : callback(message) pour afficher un toast d'erreur
 
 import { useState, useEffect } from "react";
 import { API_URL } from "../api";
 import { CARD_COLORS } from "../constants";
 import SkillPopup from "./SkillPopup";
 
-function CategoryCard({ category, onRefresh }) {
+function CategoryCard({ category, allProjects = [], onRefresh, onError }) {
   const [skills, setSkills] = useState([]);
-  const [allProjects, setAllProjects] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [inputSkill, setInputSkill] = useState("");
   const [showForm, setShowForm] = useState(false);
-
-  // État édition du nom de la catégorie
   const [editMode, setEditMode] = useState(false);
   const [editName, setEditName] = useState(category.name);
 
@@ -36,31 +35,17 @@ function CategoryCard({ category, onRefresh }) {
 
   const fetchSkills = async () => {
     try {
-      const response = await fetch(
-        `${API_URL}/categories/${category.id}/skills`
-      );
+      const response = await fetch(`${API_URL}/categories/${category.id}/skills`);
       const data = await response.json();
       setSkills(data);
     } catch (err) {
       console.error("Erreur :", err);
-    }
-  };
-
-  // Charge les projets une seule fois au montage pour les passer à SkillPopup
-  // (évite un fetch redondant à chaque ouverture de popup)
-  const fetchProjects = async () => {
-    try {
-      const response = await fetch(`${API_URL}/projects`);
-      const data = await response.json();
-      setAllProjects(data);
-    } catch (err) {
-      console.error("Erreur :", err);
+      onError("Impossible de charger les compétences.");
     }
   };
 
   useEffect(() => {
     fetchSkills();
-    fetchProjects();
   }, [category.id]);
 
   const handleAddSkill = async () => {
@@ -77,6 +62,7 @@ function CategoryCard({ category, onRefresh }) {
       onRefresh();
     } catch (err) {
       console.error("Erreur :", err);
+      onError("Impossible d'ajouter la compétence.");
     }
   };
 
@@ -85,7 +71,6 @@ function CategoryCard({ category, onRefresh }) {
     onRefresh();
   };
 
-  // Sauvegarde le nouveau nom de la catégorie via PATCH /categories/:id
   const handleSaveName = async () => {
     if (!editName.trim() || editName.trim() === category.name) {
       setEditMode(false);
@@ -102,11 +87,10 @@ function CategoryCard({ category, onRefresh }) {
       onRefresh();
     } catch (err) {
       console.error("Erreur :", err);
+      onError("Impossible de modifier le nom de la catégorie.");
     }
   };
 
-  // Supprime la catégorie après confirmation
-  // Toutes les skills associées sont supprimées en cascade (ON DELETE CASCADE)
   const handleDelete = async () => {
     const skillCount = parseInt(category.total_skills);
     const message =
@@ -115,12 +99,11 @@ function CategoryCard({ category, onRefresh }) {
         : `Supprimer la catégorie "${category.name}" ?`;
     if (!window.confirm(message)) return;
     try {
-      await fetch(`${API_URL}/categories/${category.id}`, {
-        method: "DELETE",
-      });
+      await fetch(`${API_URL}/categories/${category.id}`, { method: "DELETE" });
       onRefresh();
     } catch (err) {
       console.error("Erreur :", err);
+      onError("Impossible de supprimer la catégorie.");
     }
   };
 
@@ -130,7 +113,6 @@ function CategoryCard({ category, onRefresh }) {
       style={{ backgroundColor: cardColor }}
       aria-label={`Catégorie ${category.name}`}
     >
-      {/* Nom : mode lecture ou mode édition inline */}
       {editMode ? (
         <div className="category-edit-name">
           <input
@@ -152,7 +134,6 @@ function CategoryCard({ category, onRefresh }) {
         <p className="category-name">{category.name}</p>
       )}
 
-      {/* role="progressbar" avec valeurs min/max/now pour les lecteurs d'écran */}
       <div
         className="progress-wrap"
         role="progressbar"
@@ -178,7 +159,6 @@ function CategoryCard({ category, onRefresh }) {
         Voir les compétences
       </button>
 
-      {/* aria-expanded indique si le formulaire est ouvert ou fermé */}
       <button
         className="btn-add"
         onClick={() => setShowForm(!showForm)}
@@ -202,7 +182,6 @@ function CategoryCard({ category, onRefresh }) {
         </div>
       )}
 
-      {/* Actions en bas de carte : modifier le nom, supprimer la catégorie */}
       <div className="category-card-actions">
         <button
           className="btn-category-edit"
@@ -227,6 +206,7 @@ function CategoryCard({ category, onRefresh }) {
           allProjects={allProjects}
           onClose={() => setShowPopup(false)}
           onChange={handleSkillChange}
+          onError={onError}
         />
       )}
     </article>

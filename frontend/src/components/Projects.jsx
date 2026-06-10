@@ -4,10 +4,13 @@
 // d'une colonne à l'autre, ce qui met à jour le statut en base via PUT.
 //
 // Gère les états de chargement et d'erreur visibles à l'utilisateur.
+// Affiche les notifications d'erreur via le composant Toast.
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { API_URL } from "../api";
 import ProjectCard from "./ProjectCard";
+import Toast from "./Toast";
+import { useToast } from "../hooks/useToast";
 import {
   DndContext,
   DragOverlay,
@@ -17,7 +20,6 @@ import {
   closestCenter,
 } from "@dnd-kit/core";
 
-// Définition des colonnes : valeur ENUM → label affiché
 const COLUMNS = [
   { id: "TODO",        label: "À faire" },
   { id: "IN_PROGRESS", label: "En cours" },
@@ -31,6 +33,7 @@ function Projects() {
   const [activeProject, setActiveProject] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const { toast, showToast, hideToast } = useToast();
 
   const [newProject, setNewProject] = useState({
     name: "",
@@ -40,7 +43,7 @@ function Projects() {
     finished_at: "",
   });
 
-  const fetchProjects = async () => {
+  const fetchProjects = useCallback(async () => {
     setIsLoading(true);
     setError("");
     try {
@@ -53,11 +56,15 @@ function Projects() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchProjects();
-  }, [refresh]);
+  }, [refresh, fetchProjects]);
+
+  const handleRefresh = useCallback(() => {
+    setRefresh((prev) => prev + 1);
+  }, []);
 
   const handleNewChange = (e) => {
     setNewProject({ ...newProject, [e.target.name]: e.target.value });
@@ -73,14 +80,13 @@ function Projects() {
       });
       setNewProject({ name: "", description: "", status: "TODO", started_at: "", finished_at: "" });
       setShowForm(false);
-      setRefresh((prev) => prev + 1);
+      handleRefresh();
     } catch (err) {
       console.error("Erreur :", err);
+      showToast("Impossible de créer le projet.");
     }
   };
 
-  // Configure le capteur pointeur avec une distance minimale
-  // pour éviter de déclencher le drag sur un simple clic
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
   );
@@ -90,8 +96,6 @@ function Projects() {
     setActiveProject(project || null);
   };
 
-  // Au drop : si la carte atterrit sur une colonne différente de son statut actuel,
-  // on met à jour le statut optimistement en local puis on persiste en base
   const handleDragEnd = async (event) => {
     setActiveProject(null);
     const { active, over } = event;
@@ -100,8 +104,6 @@ function Projects() {
     const projectId = String(active.id);
     const newStatus = String(over.id);
 
-    // over.id peut être l'id d'une colonne ou d'une autre carte
-    // on ne gère que les drops sur les colonnes (TODO / IN_PROGRESS / DONE)
     if (!COLUMNS.find((c) => c.id === newStatus)) return;
 
     const project = projects.find((p) => String(p.id) === projectId);
@@ -126,8 +128,8 @@ function Projects() {
       });
     } catch (err) {
       console.error("Erreur :", err);
-      // Rollback si l'appel échoue
-      setRefresh((prev) => prev + 1);
+      showToast("Impossible de déplacer le projet.");
+      handleRefresh(); // rollback
     }
   };
 
@@ -135,13 +137,8 @@ function Projects() {
     <>
       <h3>Projets</h3>
 
-      {isLoading && (
-        <p className="state-message">Chargement...</p>
-      )}
-
-      {error && (
-        <p className="state-message state-message--error" role="alert">{error}</p>
-      )}
+      {isLoading && <p className="state-message">Chargement...</p>}
+      {error && <p className="state-message state-message--error" role="alert">{error}</p>}
 
       {!isLoading && !error && (
         <>
@@ -157,17 +154,18 @@ function Projects() {
                   key={col.id}
                   column={col}
                   projects={projects.filter((p) => p.status === col.id)}
-                  onRefresh={() => setRefresh((prev) => prev + 1)}
+                  onRefresh={handleRefresh}
+                  onError={showToast}
                 />
               ))}
             </div>
 
-            {/* Carte fantôme affichée sous le curseur pendant le drag */}
             <DragOverlay>
               {activeProject ? (
                 <ProjectCard
                   project={activeProject}
                   onRefresh={() => {}}
+                  onError={() => {}}
                   isDragging
                 />
               ) : null}
@@ -213,16 +211,23 @@ function Projects() {
           )}
         </>
       )}
+
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={hideToast}
+        />
+      )}
     </>
   );
 }
 
 // ── Composant colonne kanban ──
-// Wrappé dans useDroppable pour recevoir les cartes draguées
 
 import { useDroppable } from "@dnd-kit/core";
 
-function KanbanColumn({ column, projects, onRefresh }) {
+function KanbanColumn({ column, projects, onRefresh, onError }) {
   const { setNodeRef, isOver } = useDroppable({ id: column.id });
 
   return (
@@ -237,7 +242,7 @@ function KanbanColumn({ column, projects, onRefresh }) {
       </h4>
       <div className="kanban-column-cards">
         {projects.map((project) => (
-          <DraggableCard key={project.id} project={project} onRefresh={onRefresh} />
+          <DraggableCard key={project.id} project={project} onRefresh={onRefresh} onError={onError} />
         ))}
       </div>
     </section>
@@ -248,7 +253,7 @@ function KanbanColumn({ column, projects, onRefresh }) {
 
 import { useDraggable } from "@dnd-kit/core";
 
-function DraggableCard({ project, onRefresh }) {
+function DraggableCard({ project, onRefresh, onError }) {
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
     id: String(project.id),
   });
@@ -265,7 +270,7 @@ function DraggableCard({ project, onRefresh }) {
       {...listeners}
       {...attributes}
     >
-      <ProjectCard project={project} onRefresh={onRefresh} />
+      <ProjectCard project={project} onRefresh={onRefresh} onError={onError} />
     </div>
   );
 }

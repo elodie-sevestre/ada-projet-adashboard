@@ -8,6 +8,7 @@
 // Props :
 //   - project    : objet projet (id, name, description, status, started_at, finished_at)
 //   - onRefresh  : callback pour forcer le rechargement de la liste parente
+//   - onError    : callback(message) pour afficher un toast d'erreur
 //   - isDragging : booléen optionnel (true quand la carte est dans le DragOverlay)
 
 import { useState } from "react";
@@ -31,20 +32,18 @@ const STATUS_LABEL = {
   "DONE":        "Terminé",
 };
 
-// Tronque une date ISO à YYYY-MM-DD pour input type="date"
 const toInputDate = (str) => {
   if (!str) return "";
   return str.slice(0, 10);
 };
 
-// Formate YYYY-MM-DD en DD/MM/YYYY pour l'affichage
 const formatDate = (str) => {
   if (!str) return "—";
   const [y, m, d] = toInputDate(str).split("-");
   return `${d}/${m}/${y}`;
 };
 
-function ProjectCard({ project, onRefresh, isDragging = false }) {
+function ProjectCard({ project, onRefresh, onError, isDragging = false }) {
   const [editMode, setEditMode] = useState(false);
   const [expanded, setExpanded] = useState(false);
 
@@ -75,6 +74,7 @@ function ProjectCard({ project, onRefresh, isDragging = false }) {
       onRefresh();
     } catch (err) {
       console.error("Erreur :", err);
+      onError("Impossible de modifier le projet.");
     }
   };
 
@@ -84,12 +84,12 @@ function ProjectCard({ project, onRefresh, isDragging = false }) {
       onRefresh();
     } catch (err) {
       console.error("Erreur :", err);
+      onError("Impossible de supprimer le projet.");
     }
   };
 
   const cardColor = STATUS_COLORS[project.status] || "#F7F4EE";
 
-  // ── Mode édition ──
   if (editMode) {
     return (
       <article
@@ -99,22 +99,9 @@ function ProjectCard({ project, onRefresh, isDragging = false }) {
       >
         <div className="project-form">
           <label htmlFor={`name-${project.id}`} className="sr-only">Nom</label>
-          <input
-            id={`name-${project.id}`}
-            type="text"
-            name="name"
-            value={form.name}
-            onChange={handleChange}
-            placeholder="Nom du projet"
-          />
+          <input id={`name-${project.id}`} type="text" name="name" value={form.name} onChange={handleChange} placeholder="Nom du projet" />
           <label htmlFor={`desc-${project.id}`} className="sr-only">Description</label>
-          <textarea
-            id={`desc-${project.id}`}
-            name="description"
-            value={form.description}
-            onChange={handleChange}
-            placeholder="Description"
-          />
+          <textarea id={`desc-${project.id}`} name="description" value={form.description} onChange={handleChange} placeholder="Description" />
           <label htmlFor={`status-${project.id}`} className="sr-only">Statut</label>
           <select id={`status-${project.id}`} name="status" value={form.status} onChange={handleChange}>
             <option value="TODO">À faire</option>
@@ -140,14 +127,12 @@ function ProjectCard({ project, onRefresh, isDragging = false }) {
     );
   }
 
-  // ── Mode lecture ──
   return (
     <article
       className={`project-card${isDragging ? " project-card--dragging" : ""}`}
       style={{ backgroundColor: cardColor }}
       aria-label={`Projet ${project.name}`}
     >
-      {/* Partie toujours visible */}
       <p className="project-name">{project.name}</p>
       {project.description && (
         <p className="project-description">{project.description}</p>
@@ -157,7 +142,6 @@ function ProjectCard({ project, onRefresh, isDragging = false }) {
         {STATUS_LABEL[project.status]}
       </p>
 
-      {/* Bouton déplier */}
       <button
         className={`btn-expand${expanded ? " btn-expand--open" : ""}`}
         onClick={() => setExpanded(!expanded)}
@@ -167,7 +151,6 @@ function ProjectCard({ project, onRefresh, isDragging = false }) {
         {expanded ? "▴" : "▾"}
       </button>
 
-      {/* Partie dépliée */}
       {expanded && (
         <div className="project-card-details">
           <div className="project-dates">
@@ -175,18 +158,10 @@ function ProjectCard({ project, onRefresh, isDragging = false }) {
             <span>Fin : {formatDate(project.finished_at)}</span>
           </div>
           <div className="card-actions">
-            <button
-              className="btn-edit"
-              onClick={() => setEditMode(true)}
-              aria-label={`Modifier le projet ${project.name}`}
-            >
+            <button className="btn-edit" onClick={() => setEditMode(true)} aria-label={`Modifier le projet ${project.name}`}>
               ✏️ Modifier
             </button>
-            <button
-              className="btn-delete"
-              onClick={handleDelete}
-              aria-label={`Supprimer le projet ${project.name}`}
-            >
+            <button className="btn-delete" onClick={handleDelete} aria-label={`Supprimer le projet ${project.name}`}>
               🗑️
             </button>
           </div>

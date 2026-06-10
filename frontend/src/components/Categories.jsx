@@ -1,39 +1,51 @@
 // ==================== Composant Categories ====================
-// Récupère la liste de toutes les catégories depuis l'API
-// et les affiche sous forme de grille de cartes avec leur progression.
+// Récupère catégories et projets depuis l'API et les distribue aux enfants.
+// Charge les projets une seule fois ici pour éviter N fetch dans CategoryCard.
 //
 // Gère les états de chargement et d'erreur visibles à l'utilisateur.
-// Calcule également une progression globale en agrégeant
-// total_skills et validated_skills de toutes les catégories.
+// Affiche les notifications d'erreur via le composant Toast.
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { API_URL } from "../api";
 import CategoryCard from "./CategoryCard";
 import AddSkillForm from "./AddSkillForm";
+import Toast from "./Toast";
+import { useToast } from "../hooks/useToast";
 
 function Categories() {
   const [categories, setCategories] = useState([]);
+  const [allProjects, setAllProjects] = useState([]);
   const [refresh, setRefresh] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const { toast, showToast, hideToast } = useToast();
 
   useEffect(() => {
-    const fetchCategories = async () => {
+    const fetchData = async () => {
       setIsLoading(true);
       setError("");
       try {
-        const response = await fetch(`${API_URL}/categories`);
-        const data = await response.json();
-        setCategories(data);
+        // Charge catégories et projets en parallèle
+        const [catRes, projRes] = await Promise.all([
+          fetch(`${API_URL}/categories`),
+          fetch(`${API_URL}/projects`),
+        ]);
+        const [cats, projs] = await Promise.all([catRes.json(), projRes.json()]);
+        setCategories(cats);
+        setAllProjects(projs);
       } catch (err) {
         console.error("Erreur :", err);
-        setError("Impossible de charger les catégories. Vérifiez que le serveur est démarré.");
+        setError("Impossible de charger les données. Vérifiez que le serveur est démarré.");
       } finally {
         setIsLoading(false);
       }
     };
-    fetchCategories();
+    fetchData();
   }, [refresh]);
+
+  const handleRefresh = useCallback(() => {
+    setRefresh((prev) => prev + 1);
+  }, []);
 
   const totalSkills = categories.reduce((sum, c) => sum + parseInt(c.total_skills), 0);
   const validatedSkills = categories.reduce((sum, c) => sum + parseInt(c.validated_skills), 0);
@@ -43,13 +55,8 @@ function Categories() {
     <>
       <h3>Compétences</h3>
 
-      {isLoading && (
-        <p className="state-message">Chargement...</p>
-      )}
-
-      {error && (
-        <p className="state-message state-message--error" role="alert">{error}</p>
-      )}
+      {isLoading && <p className="state-message">Chargement...</p>}
+      {error && <p className="state-message state-message--error" role="alert">{error}</p>}
 
       {!isLoading && !error && (
         <>
@@ -61,7 +68,6 @@ function Categories() {
                   {validatedSkills} / {totalSkills} compétences validées
                 </span>
               </div>
-              {/* role="progressbar" pour les lecteurs d'écran */}
               <div
                 className="global-progress-track"
                 role="progressbar"
@@ -81,13 +87,11 @@ function Categories() {
             </div>
           )}
 
-          {/* Formulaire global d'ajout d'une compétence */}
           <AddSkillForm
             categories={categories}
-            onSuccess={() => setRefresh((prev) => prev + 1)}
+            onSuccess={handleRefresh}
           />
 
-          {/* aria-live annonce les mises à jour au lecteur d'écran */}
           <div
             className="categories-grid"
             aria-live="polite"
@@ -97,11 +101,21 @@ function Categories() {
               <CategoryCard
                 key={category.id}
                 category={category}
-                onRefresh={() => setRefresh((prev) => prev + 1)}
+                allProjects={allProjects}
+                onRefresh={handleRefresh}
+                onError={showToast}
               />
             ))}
           </div>
         </>
+      )}
+
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          onClose={hideToast}
+        />
       )}
     </>
   );

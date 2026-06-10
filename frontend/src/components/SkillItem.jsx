@@ -2,24 +2,24 @@
 // Affiche une skill sous forme de ligne avec :
 //   - une checkbox pour basculer son statut validé/non validé (PATCH)
 //   - son libellé via un label associé (accessibilité)
-//   - un mode édition inline pour corriger la description (PATCH)
+//   - un mode édition inline pour corriger la description (PUT)
 //   - les projets associés sous forme de tags avec × pour dissocier
 //   - un select pour associer un nouveau projet
 //   - des boutons modifier (✏️) et supprimer (🗑️)
 //
 // Props :
-//   - skill : objet skill (id, description, validated, projects)
+//   - skill       : objet skill (id, description, validated, projects)
 //   - allProjects : liste de tous les projets disponibles (pour le select)
-//   - onChange : callback appelé après chaque modification pour rafraîchir l'affichage
+//   - onChange    : callback appelé après chaque modification pour rafraîchir l'affichage
+//   - onError     : callback(message) pour afficher un toast d'erreur
 
 import { useState } from "react";
 import { API_URL } from "../api";
 
-function SkillItem({ skill, allProjects = [], onChange }) {
+function SkillItem({ skill, allProjects = [], onChange, onError }) {
   const [editMode, setEditMode] = useState(false);
   const [editDescription, setEditDescription] = useState(skill.description);
 
-  // Bascule le champ "validated" de la skill (true → false ou false → true)
   const handleValidated = async () => {
     try {
       await fetch(`${API_URL}/skills/${skill.id}`, {
@@ -30,22 +30,20 @@ function SkillItem({ skill, allProjects = [], onChange }) {
       onChange();
     } catch (err) {
       console.error("Erreur :", err);
+      onError("Impossible de modifier le statut de la compétence.");
     }
   };
 
-  // Supprime la skill via DELETE
   const handleDelete = async () => {
     try {
-      await fetch(`${API_URL}/skills/${skill.id}`, {
-        method: "DELETE",
-      });
+      await fetch(`${API_URL}/skills/${skill.id}`, { method: "DELETE" });
       onChange();
     } catch (err) {
       console.error("Erreur :", err);
+      onError("Impossible de supprimer la compétence.");
     }
   };
 
-  // Sauvegarde la nouvelle description via PUT /skills/:id
   const handleSaveDescription = async () => {
     if (!editDescription.trim() || editDescription.trim() === skill.description) {
       setEditMode(false);
@@ -62,10 +60,10 @@ function SkillItem({ skill, allProjects = [], onChange }) {
       onChange();
     } catch (err) {
       console.error("Erreur :", err);
+      onError("Impossible de modifier la compétence.");
     }
   };
 
-  // Associe un projet à la skill via POST /projects/:id/skills
   const handleAddProject = async (e) => {
     const projectId = e.target.value;
     if (!projectId) return;
@@ -75,14 +73,14 @@ function SkillItem({ skill, allProjects = [], onChange }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ skill_id: skill.id }),
       });
-      e.target.value = ""; // remet le select à l'état initial
+      e.target.value = "";
       onChange();
     } catch (err) {
       console.error("Erreur :", err);
+      onError("Impossible d'associer le projet.");
     }
   };
 
-  // Dissocie un projet de la skill via DELETE /projects/:id/skills/:skillId
   const handleRemoveProject = async (projectId) => {
     try {
       await fetch(`${API_URL}/projects/${projectId}/skills/${skill.id}`, {
@@ -91,21 +89,16 @@ function SkillItem({ skill, allProjects = [], onChange }) {
       onChange();
     } catch (err) {
       console.error("Erreur :", err);
+      onError("Impossible de dissocier le projet.");
     }
   };
 
-  // Projets déjà associés à cette skill : tableau d'objets {id, name}
   const associatedProjects = skill.projects || [];
   const associatedIds = associatedProjects.map((p) => p.id);
-
-  // Projets disponibles = tous les projets moins ceux déjà associés
-  const availableProjects = allProjects.filter(
-    (p) => !associatedIds.includes(p.id)
-  );
+  const availableProjects = allProjects.filter((p) => !associatedIds.includes(p.id));
 
   return (
     <div className="skill-row">
-      {/* Checkbox liée au label pour l'accessibilité */}
       <input
         type="checkbox"
         id={`skill-${skill.id}`}
@@ -113,7 +106,6 @@ function SkillItem({ skill, allProjects = [], onChange }) {
         onChange={handleValidated}
       />
       <div className="skill-content">
-        {/* Mode édition inline ou affichage normal */}
         {editMode ? (
           <div className="skill-edit">
             <input
@@ -137,7 +129,6 @@ function SkillItem({ skill, allProjects = [], onChange }) {
           </label>
         )}
 
-        {/* Tags des projets associés */}
         {associatedProjects.length > 0 && (
           <div className="skill-project-tags">
             {associatedProjects.map((project) => (
@@ -155,7 +146,6 @@ function SkillItem({ skill, allProjects = [], onChange }) {
           </div>
         )}
 
-        {/* Select pour associer un nouveau projet */}
         {availableProjects.length > 0 && (
           <select
             className="skill-project-select"
@@ -171,7 +161,6 @@ function SkillItem({ skill, allProjects = [], onChange }) {
         )}
       </div>
 
-      {/* Boutons modifier et supprimer */}
       <div className="skill-actions">
         <button
           className="btn-edit-skill"
