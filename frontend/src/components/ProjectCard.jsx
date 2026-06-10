@@ -1,12 +1,9 @@
 // ==================== Composant ProjectCard ====================
-// Affiche une carte pour un projet avec deux modes :
-//   - mode lecture  : nom, description, statut, dates
-//   - mode édition  : formulaire avec calendrier natif et select statut
+// Affiche une carte projet en deux niveaux :
+//   - toujours visible : nom, description, statut
+//   - déplié via bouton ▾ : dates, modifier, supprimer
 //
-// Les dates arrivent de l'API au format ISO YYYY-MM-DD (ou YYYY-MM-DDTHH:mm:ss.sssZ).
-// - Pour l'input type="date" : on tronque à YYYY-MM-DD, c'est le bon format natif.
-// - Pour l'affichage : on formate en DD/MM/YYYY via formatDate().
-// Pas de conversion aller-retour : on renvoie toujours YYYY-MM-DD au PUT.
+// Le mode édition remplace la carte entière.
 //
 // Props :
 //   - project    : objet projet (id, name, description, status, started_at, finished_at)
@@ -34,29 +31,28 @@ const STATUS_LABEL = {
   "DONE":        "Terminé",
 };
 
-// Tronque une date ISO (YYYY-MM-DDTHH:… ou YYYY-MM-DD) à YYYY-MM-DD
-// pour l'utiliser dans un input type="date"
+// Tronque une date ISO à YYYY-MM-DD pour input type="date"
 const toInputDate = (str) => {
   if (!str) return "";
-  return str.slice(0, 10); // "2026-05-19T00:00:00.000Z" → "2026-05-19"
+  return str.slice(0, 10);
 };
 
 // Formate YYYY-MM-DD en DD/MM/YYYY pour l'affichage
 const formatDate = (str) => {
   if (!str) return "—";
-  const d = toInputDate(str); // normalise si besoin
-  const [y, m, day] = d.split("-");
-  return `${day}/${m}/${y}`;
+  const [y, m, d] = toInputDate(str).split("-");
+  return `${d}/${m}/${y}`;
 };
 
 function ProjectCard({ project, onRefresh, isDragging = false }) {
   const [editMode, setEditMode] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
   const [form, setForm] = useState({
     name:        project.name,
     description: project.description || "",
     status:      project.status,
-    started_at:  toInputDate(project.started_at),  // YYYY-MM-DD pour l'input
+    started_at:  toInputDate(project.started_at),
     finished_at: toInputDate(project.finished_at),
   });
 
@@ -64,7 +60,6 @@ function ProjectCard({ project, onRefresh, isDragging = false }) {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // Le form contient déjà des dates en YYYY-MM-DD : on envoie tel quel
   const handleSave = async () => {
     try {
       await fetch(`${API_URL}/projects/${project.id}`, {
@@ -103,7 +98,7 @@ function ProjectCard({ project, onRefresh, isDragging = false }) {
         aria-label={`Modifier le projet ${project.name}`}
       >
         <div className="project-form">
-          <label htmlFor={`name-${project.id}`} className="sr-only">Nom du projet</label>
+          <label htmlFor={`name-${project.id}`} className="sr-only">Nom</label>
           <input
             id={`name-${project.id}`}
             type="text"
@@ -152,6 +147,7 @@ function ProjectCard({ project, onRefresh, isDragging = false }) {
       style={{ backgroundColor: cardColor }}
       aria-label={`Projet ${project.name}`}
     >
+      {/* Partie toujours visible */}
       <p className="project-name">{project.name}</p>
       {project.description && (
         <p className="project-description">{project.description}</p>
@@ -160,26 +156,42 @@ function ProjectCard({ project, onRefresh, isDragging = false }) {
         <span aria-hidden="true">{STATUS_EMOJI[project.status]}</span>{" "}
         {STATUS_LABEL[project.status]}
       </p>
-      <div className="project-dates">
-        <span>Début : {formatDate(project.started_at)}</span>
-        <span>Fin : {formatDate(project.finished_at)}</span>
-      </div>
-      <div className="card-actions">
-        <button
-          className="btn-edit"
-          onClick={() => setEditMode(true)}
-          aria-label={`Modifier le projet ${project.name}`}
-        >
-          ✏️ Modifier
-        </button>
-        <button
-          className="btn-delete"
-          onClick={handleDelete}
-          aria-label={`Supprimer le projet ${project.name}`}
-        >
-          🗑️
-        </button>
-      </div>
+
+      {/* Bouton déplier */}
+      <button
+        className={`btn-expand${expanded ? " btn-expand--open" : ""}`}
+        onClick={() => setExpanded(!expanded)}
+        aria-expanded={expanded}
+        aria-label={expanded ? "Réduire les détails" : "Voir les détails"}
+      >
+        {expanded ? "▴" : "▾"}
+      </button>
+
+      {/* Partie dépliée */}
+      {expanded && (
+        <div className="project-card-details">
+          <div className="project-dates">
+            <span>Début : {formatDate(project.started_at)}</span>
+            <span>Fin : {formatDate(project.finished_at)}</span>
+          </div>
+          <div className="card-actions">
+            <button
+              className="btn-edit"
+              onClick={() => setEditMode(true)}
+              aria-label={`Modifier le projet ${project.name}`}
+            >
+              ✏️ Modifier
+            </button>
+            <button
+              className="btn-delete"
+              onClick={handleDelete}
+              aria-label={`Supprimer le projet ${project.name}`}
+            >
+              🗑️
+            </button>
+          </div>
+        </div>
+      )}
     </article>
   );
 }
