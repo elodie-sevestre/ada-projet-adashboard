@@ -907,3 +907,85 @@ input[type="checkbox"] {
 .btn-edit-skill:hover {
   color: #1c1c1c;
 }
+
+/* ── Kanban ── */
+
+.kanban-board {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+  margin-bottom: 1.5rem;
+}
+
+.kanban-column {
+  background: #f7f4ee;
+  border: 1px solid #e0dbd0;
+  border-radius: 6px;
+  padding: 1rem;
+  min-height: 200px;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+}
+
+.kanban-column--over {
+  background: #eef5fb;
+  border-color: #a8c8e0;
+}
+
+.kanban-column-title {
+  font-family: "Playfair Display", Georgia, serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #555;
+  margin: 0 0 0.75rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.kanban-column-count {
+  font-family: "Source Sans 3", system-ui, sans-serif;
+  font-size: 0.78rem;
+  font-weight: 400;
+  background: #ddd;
+  color: #555;
+  border-radius: 10px;
+  padding: 1px 7px;
+}
+
+.kanban-column-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+/* ── Carte draggable ── */
+
+.draggable-card {
+  cursor: grab;
+  touch-action: none;
+}
+
+.draggable-card:active {
+  cursor: grabbing;
+}
+
+.draggable-card--dragging {
+  opacity: 0.4;
+}
+
+.project-card--dragging {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  transform: rotate(1.5deg);
+  cursor: grabbing;
+}
+
+@media (max-width: 900px) {
+  .kanban-board {
+    grid-template-columns: 1fr;
+  }
+}
