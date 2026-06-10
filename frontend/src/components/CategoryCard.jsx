@@ -4,6 +4,8 @@
 //   - l'affichage du nom et de la barre de progression
 //   - l'ajout d'une nouvelle skill dans cette catégorie via un formulaire inline
 //   - l'ouverture de la popup de détail des skills (SkillPopup)
+//   - la modification du nom de la catégorie (édition inline)
+//   - la suppression de la catégorie (avec confirmation, cascade sur les skills)
 //
 // Props :
 //   - category : objet catégorie (id, name, total_skills, validated_skills)
@@ -28,6 +30,10 @@ function CategoryCard({ category, onRefresh }) {
   const [showPopup, setShowPopup] = useState(false);
   const [inputSkill, setInputSkill] = useState("");
   const [showForm, setShowForm] = useState(false);
+
+  // État édition du nom de la catégorie
+  const [editMode, setEditMode] = useState(false);
+  const [editName, setEditName] = useState(category.name);
 
   const cardColor = CARD_COLORS[category.id % CARD_COLORS.length];
 
@@ -74,13 +80,72 @@ function CategoryCard({ category, onRefresh }) {
     onRefresh();
   };
 
+  // Sauvegarde le nouveau nom de la catégorie via PATCH /categories/:id
+  const handleSaveName = async () => {
+    if (!editName.trim() || editName.trim() === category.name) {
+      setEditMode(false);
+      setEditName(category.name);
+      return;
+    }
+    try {
+      await fetch(`${API_URL}/categories/${category.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: editName.trim() }),
+      });
+      setEditMode(false);
+      onRefresh();
+    } catch (err) {
+      console.error("Erreur :", err);
+    }
+  };
+
+  // Supprime la catégorie après confirmation
+  // Toutes les skills associées sont supprimées en cascade (ON DELETE CASCADE)
+  const handleDelete = async () => {
+    const skillCount = parseInt(category.total_skills);
+    const message =
+      skillCount > 0
+        ? `Supprimer la catégorie "${category.name}" et ses ${skillCount} compétence(s) ?`
+        : `Supprimer la catégorie "${category.name}" ?`;
+    if (!window.confirm(message)) return;
+    try {
+      await fetch(`${API_URL}/categories/${category.id}`, {
+        method: "DELETE",
+      });
+      onRefresh();
+    } catch (err) {
+      console.error("Erreur :", err);
+    }
+  };
+
   return (
     <article
       className="category-card"
       style={{ backgroundColor: cardColor }}
       aria-label={`Catégorie ${category.name}`}
     >
-      <p className="category-name">{category.name}</p>
+      {/* Nom : mode lecture ou mode édition inline */}
+      {editMode ? (
+        <div className="category-edit-name">
+          <input
+            type="text"
+            className="category-name-input"
+            value={editName}
+            onChange={(e) => setEditName(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") handleSaveName();
+              if (e.key === "Escape") { setEditMode(false); setEditName(category.name); }
+            }}
+            aria-label="Modifier le nom de la catégorie"
+            autoFocus
+          />
+          <button className="btn-validate" onClick={handleSaveName}>OK</button>
+          <button className="btn-cancel" onClick={() => { setEditMode(false); setEditName(category.name); }}>✕</button>
+        </div>
+      ) : (
+        <p className="category-name">{category.name}</p>
+      )}
 
       {/* role="progressbar" avec valeurs min/max/now pour les lecteurs d'écran */}
       <div
@@ -131,6 +196,24 @@ function CategoryCard({ category, onRefresh }) {
           <button className="btn-validate" onClick={handleAddSkill}>OK</button>
         </div>
       )}
+
+      {/* Actions en bas de carte : modifier le nom, supprimer la catégorie */}
+      <div className="category-card-actions">
+        <button
+          className="btn-category-edit"
+          onClick={() => setEditMode(true)}
+          aria-label={`Modifier le nom de la catégorie ${category.name}`}
+        >
+          ✏️
+        </button>
+        <button
+          className="btn-category-delete"
+          onClick={handleDelete}
+          aria-label={`Supprimer la catégorie ${category.name}`}
+        >
+          🗑️
+        </button>
+      </div>
 
       {showPopup && (
         <SkillPopup

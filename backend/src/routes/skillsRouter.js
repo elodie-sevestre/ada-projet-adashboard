@@ -68,6 +68,23 @@ skillsRouter.post("/", async (req, res) => {
   res.status(201).json(rows[0]);
 });
 
+// PUT /skills/:id - Modifie la description d'une skill
+// Attend dans le body : { description }
+skillsRouter.put("/:id", async (req, res) => {
+  const { description } = req.body;
+  if (!description?.trim()) {
+    return res.status(400).json({ error: "Le champ description est requis" });
+  }
+  const { rows } = await pool.query(
+    "UPDATE skills SET description = $1 WHERE id = $2 RETURNING *",
+    [description.trim(), req.params.id]
+  );
+  if (!rows[0]) {
+    return res.status(404).json({ error: "Skill introuvable" });
+  }
+  res.json(rows[0]);
+});
+
 // PATCH /skills/:id - Bascule le statut "validé" d'une skill
 // Attend dans le body : { validated: boolean }
 skillsRouter.patch("/:id", async (req, res) => {

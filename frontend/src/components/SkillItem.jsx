@@ -2,18 +2,22 @@
 // Affiche une skill sous forme de ligne avec :
 //   - une checkbox pour basculer son statut validé/non validé (PATCH)
 //   - son libellé via un label associé (accessibilité)
+//   - un mode édition inline pour corriger la description (PATCH)
 //   - les projets associés sous forme de tags avec × pour dissocier
 //   - un select pour associer un nouveau projet
-//   - un bouton de suppression (DELETE)
+//   - des boutons modifier (✏️) et supprimer (🗑️)
 //
 // Props :
 //   - skill : objet skill (id, description, validated, projects)
 //   - allProjects : liste de tous les projets disponibles (pour le select)
 //   - onChange : callback appelé après chaque modification pour rafraîchir l'affichage
 
+import { useState } from "react";
 import { API_URL } from "../api";
 
 function SkillItem({ skill, allProjects = [], onChange }) {
+  const [editMode, setEditMode] = useState(false);
+  const [editDescription, setEditDescription] = useState(skill.description);
 
   // Bascule le champ "validated" de la skill (true → false ou false → true)
   const handleValidated = async () => {
@@ -41,6 +45,26 @@ function SkillItem({ skill, allProjects = [], onChange }) {
     }
   };
 
+  // Sauvegarde la nouvelle description via PUT /skills/:id
+  const handleSaveDescription = async () => {
+    if (!editDescription.trim() || editDescription.trim() === skill.description) {
+      setEditMode(false);
+      setEditDescription(skill.description);
+      return;
+    }
+    try {
+      await fetch(`${API_URL}/skills/${skill.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ description: editDescription.trim() }),
+      });
+      setEditMode(false);
+      onChange();
+    } catch (err) {
+      console.error("Erreur :", err);
+    }
+  };
+
   // Associe un projet à la skill via POST /projects/:id/skills
   const handleAddProject = async (e) => {
     const projectId = e.target.value;
@@ -59,9 +83,6 @@ function SkillItem({ skill, allProjects = [], onChange }) {
   };
 
   // Dissocie un projet de la skill via DELETE /projects/:id/skills/:skillId
-  // L'API renvoie maintenant les projets sous forme d'objets {id, name},
-  // on travaille donc directement avec l'id (fiable même si deux projets
-  // portent le même nom)
   const handleRemoveProject = async (projectId) => {
     try {
       await fetch(`${API_URL}/projects/${projectId}/skills/${skill.id}`, {
@@ -92,9 +113,29 @@ function SkillItem({ skill, allProjects = [], onChange }) {
         onChange={handleValidated}
       />
       <div className="skill-content">
-        <label htmlFor={`skill-${skill.id}`} className="skill-label">
-          {skill.description}
-        </label>
+        {/* Mode édition inline ou affichage normal */}
+        {editMode ? (
+          <div className="skill-edit">
+            <input
+              type="text"
+              className="skill-edit-input"
+              value={editDescription}
+              onChange={(e) => setEditDescription(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") handleSaveDescription();
+                if (e.key === "Escape") { setEditMode(false); setEditDescription(skill.description); }
+              }}
+              aria-label="Modifier la description de la compétence"
+              autoFocus
+            />
+            <button className="btn-validate" onClick={handleSaveDescription}>OK</button>
+            <button className="btn-cancel" onClick={() => { setEditMode(false); setEditDescription(skill.description); }}>✕</button>
+          </div>
+        ) : (
+          <label htmlFor={`skill-${skill.id}`} className="skill-label">
+            {skill.description}
+          </label>
+        )}
 
         {/* Tags des projets associés */}
         {associatedProjects.length > 0 && (
@@ -130,13 +171,23 @@ function SkillItem({ skill, allProjects = [], onChange }) {
         )}
       </div>
 
-      <button
-        className="btn-delete"
-        onClick={handleDelete}
-        aria-label="Supprimer la compétence"
-      >
-        🗑️
-      </button>
+      {/* Boutons modifier et supprimer */}
+      <div className="skill-actions">
+        <button
+          className="btn-edit-skill"
+          onClick={() => setEditMode(true)}
+          aria-label="Modifier la compétence"
+        >
+          ✏️
+        </button>
+        <button
+          className="btn-delete"
+          onClick={handleDelete}
+          aria-label="Supprimer la compétence"
+        >
+          🗑️
+        </button>
+      </div>
     </div>
   );
 }
