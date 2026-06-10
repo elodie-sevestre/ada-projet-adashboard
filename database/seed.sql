@@ -13,15 +13,15 @@ INSERT INTO categories (name) VALUES
 
 -- Projets
 INSERT INTO projects (name, description, status, started_at, finished_at) VALUES
-    ('adapage',      'site web',                                                   'terminé',  '2026-02-03', '2026-02-06'),
-    ('trackada',     'outil CLI',                                                  'terminé',  '2026-02-23', '2026-02-27'),
-    ('adaquiz',      'quiz interactif',                                            'terminé',  '2026-03-09', '2026-03-20'),
-    ('adalgo',       'tests unitaires',                                            'terminé',  '2026-03-24', '2026-03-27'),
-    ('adataviz',     'visualisation de données API',                               'terminé',  '2026-04-07', '2026-04-17'),
-    ('adatabase',    'base de données de gestion de ressources pédagogiques',      'terminé',  '2026-05-04', '2026-05-07'),
-    ('adapi',        'API REST pour gérer DB adatabase',                           'terminé',  '2026-05-07', '2026-05-13'),
-    ('adataviz 2.0', 'transformer Adataviz en projet React',                       'terminé',  '2026-05-13', '2026-05-18'),
-    ('adashboard',   'création dashboard pour suivi projets école',                'en_cours', '2026-05-19', NULL);
+    ('adapage',      'site web',                                                   'DONE',  '2026-02-03', '2026-02-06'),
+    ('trackada',     'outil CLI',                                                  'DONE',  '2026-02-23', '2026-02-27'),
+    ('adaquiz',      'quiz interactif',                                            'DONE',  '2026-03-09', '2026-03-20'),
+    ('adalgo',       'tests unitaires',                                            'DONE',  '2026-03-24', '2026-03-27'),
+    ('adataviz',     'visualisation de données API',                               'DONE',  '2026-04-07', '2026-04-17'),
+    ('adatabase',    'base de données de gestion de ressources pédagogiques',      'DONE',  '2026-05-04', '2026-05-07'),
+    ('adapi',        'API REST pour gérer DB adatabase',                           'DONE',  '2026-05-07', '2026-05-13'),
+    ('adataviz 2.0', 'transformer Adataviz en projet React',                       'DONE',  '2026-05-13', '2026-05-18'),
+    ('adashboard',   'création dashboard pour suivi projets école',                'IN_PROGRESS', '2026-05-19', NULL);
 
 -- Skills HTML / CSS (category_id = 1)
 INSERT INTO skills (description, validated, category_id) VALUES

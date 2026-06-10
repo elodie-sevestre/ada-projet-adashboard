@@ -3,35 +3,36 @@
 //   - mode lecture  : nom, description, statut, dates
 //   - mode édition  : formulaire avec calendrier natif et select statut
 //
+// Accepte une prop isDragging pour adapter le style pendant le drag.
+//
 // Props :
-//   - project   : objet projet (id, name, description, status, started_at, finished_at)
-//   - onRefresh : callback pour forcer le rechargement de la liste parente
+//   - project    : objet projet (id, name, description, status, started_at, finished_at)
+//   - onRefresh  : callback pour forcer le rechargement de la liste parente
+//   - isDragging : booléen optionnel (true quand la carte est dans le DragOverlay)
 
 import { useState } from "react";
 import { API_URL } from "../api";
 
 // Couleurs de fond associées aux statuts
 const STATUS_COLORS = {
-  "à_initier": "#F0ECD4",
-  "en_cours":  "#D6E8F0",
-  "terminé":   "#D4ECD2",
+  "TODO":        "#F0ECD4",
+  "IN_PROGRESS": "#D6E8F0",
+  "DONE":        "#D4ECD2",
 };
 
-// Emojis associés aux statuts (correction bug : contenait des couleurs hex)
 const STATUS_EMOJI = {
-  "à_initier": "⚪",
-  "en_cours":  "🔵",
-  "terminé":   "🟢",
+  "TODO":        "⚪",
+  "IN_PROGRESS": "🔵",
+  "DONE":        "🟢",
 };
 
-// Labels lisibles pour les lecteurs d'écran
 const STATUS_LABEL = {
-  "à_initier": "à initier",
-  "en_cours":  "en cours",
-  "terminé":   "terminé",
+  "TODO":        "À faire",
+  "IN_PROGRESS": "En cours",
+  "DONE":        "Terminé",
 };
 
-function ProjectCard({ project, onRefresh }) {
+function ProjectCard({ project, onRefresh, isDragging = false }) {
   const [editMode, setEditMode] = useState(false);
 
   // Convertit DD-MM-YYYY vers YYYY-MM-DD pour l'input type="date"
@@ -69,9 +70,7 @@ function ProjectCard({ project, onRefresh }) {
 
   const handleDelete = async () => {
     try {
-      await fetch(`${API_URL}/projects/${project.id}`, {
-        method: "DELETE",
-      });
+      await fetch(`${API_URL}/projects/${project.id}`, { method: "DELETE" });
       onRefresh();
     } catch (err) {
       console.error("Erreur :", err);
@@ -108,9 +107,9 @@ function ProjectCard({ project, onRefresh }) {
           />
           <label htmlFor={`status-${project.id}`} className="sr-only">Statut</label>
           <select id={`status-${project.id}`} name="status" value={form.status} onChange={handleChange}>
-            <option value="à_initier">à initier</option>
-            <option value="en_cours">en cours</option>
-            <option value="terminé">terminé</option>
+            <option value="TODO">À faire</option>
+            <option value="IN_PROGRESS">En cours</option>
+            <option value="DONE">Terminé</option>
           </select>
           <div className="form-dates">
             <label htmlFor={`start-${project.id}`}>
@@ -134,7 +133,7 @@ function ProjectCard({ project, onRefresh }) {
   // ── Mode lecture ──
   return (
     <article
-      className="project-card"
+      className={`project-card${isDragging ? " project-card--dragging" : ""}`}
       style={{ backgroundColor: cardColor }}
       aria-label={`Projet ${project.name}`}
     >

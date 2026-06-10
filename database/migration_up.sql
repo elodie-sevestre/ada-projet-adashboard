@@ -1,12 +1,13 @@
 -- ==================== Migration UP ====================
--- Crée toutes les tables du schéma adashboard v2
+-- Crée toutes les tables du schéma adashboard v3
 -- Nouveau modèle : skills organisées par catégorie,
 -- liées aux projets via une table de liaison projects_skills
+-- Statuts normalisés : TODO / IN_PROGRESS / DONE
 
 CREATE TYPE status_type AS ENUM (
-    'à_initier',
-    'en_cours',
-    'terminé'
+    'TODO',
+    'IN_PROGRESS',
+    'DONE'
 );
 
 -- Catégories de compétences (HTML/CSS, JavaScript, React, SQL...)
@@ -31,7 +32,7 @@ CREATE TABLE projects (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
     description TEXT,
-    status status_type DEFAULT 'à_initier',
+    status status_type DEFAULT 'TODO',
     started_at DATE,
     finished_at DATE,
     created_at TIMESTAMPTZ DEFAULT NOW(),
