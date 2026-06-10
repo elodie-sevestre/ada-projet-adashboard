@@ -11,12 +11,14 @@
 //   - allProjects : liste de tous les projets disponibles (pour le select)
 //   - onChange : callback appelé après chaque modification pour rafraîchir l'affichage
 
+import { API_URL } from "../api";
+
 function SkillItem({ skill, allProjects = [], onChange }) {
 
   // Bascule le champ "validated" de la skill (true → false ou false → true)
   const handleValidated = async () => {
     try {
-      await fetch(`http://localhost:3000/skills/${skill.id}`, {
+      await fetch(`${API_URL}/skills/${skill.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ validated: !skill.validated }),
@@ -30,7 +32,7 @@ function SkillItem({ skill, allProjects = [], onChange }) {
   // Supprime la skill via DELETE
   const handleDelete = async () => {
     try {
-      await fetch(`http://localhost:3000/skills/${skill.id}`, {
+      await fetch(`${API_URL}/skills/${skill.id}`, {
         method: "DELETE",
       });
       onChange();
@@ -44,7 +46,7 @@ function SkillItem({ skill, allProjects = [], onChange }) {
     const projectId = e.target.value;
     if (!projectId) return;
     try {
-      await fetch(`http://localhost:3000/projects/${projectId}/skills`, {
+      await fetch(`${API_URL}/projects/${projectId}/skills`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ skill_id: skill.id }),
@@ -57,12 +59,12 @@ function SkillItem({ skill, allProjects = [], onChange }) {
   };
 
   // Dissocie un projet de la skill via DELETE /projects/:id/skills/:skillId
-  const handleRemoveProject = async (projectName) => {
-    // Retrouve l'id du projet depuis son nom
-    const project = allProjects.find((p) => p.name === projectName);
-    if (!project) return;
+  // L'API renvoie maintenant les projets sous forme d'objets {id, name},
+  // on travaille donc directement avec l'id (fiable même si deux projets
+  // portent le même nom)
+  const handleRemoveProject = async (projectId) => {
     try {
-      await fetch(`http://localhost:3000/projects/${project.id}/skills/${skill.id}`, {
+      await fetch(`${API_URL}/projects/${projectId}/skills/${skill.id}`, {
         method: "DELETE",
       });
       onChange();
@@ -71,12 +73,13 @@ function SkillItem({ skill, allProjects = [], onChange }) {
     }
   };
 
-  // Projets déjà associés à cette skill
-  const associatedNames = skill.projects || [];
+  // Projets déjà associés à cette skill : tableau d'objets {id, name}
+  const associatedProjects = skill.projects || [];
+  const associatedIds = associatedProjects.map((p) => p.id);
 
   // Projets disponibles = tous les projets moins ceux déjà associés
   const availableProjects = allProjects.filter(
-    (p) => !associatedNames.includes(p.name)
+    (p) => !associatedIds.includes(p.id)
   );
 
   return (
@@ -94,15 +97,15 @@ function SkillItem({ skill, allProjects = [], onChange }) {
         </label>
 
         {/* Tags des projets associés */}
-        {associatedNames.length > 0 && (
+        {associatedProjects.length > 0 && (
           <div className="skill-project-tags">
-            {associatedNames.map((name) => (
-              <span key={name} className="skill-project-tag">
-                {name}
+            {associatedProjects.map((project) => (
+              <span key={project.id} className="skill-project-tag">
+                {project.name}
                 <button
                   className="tag-remove"
-                  onClick={() => handleRemoveProject(name)}
-                  aria-label={`Dissocier le projet ${name}`}
+                  onClick={() => handleRemoveProject(project.id)}
+                  aria-label={`Dissocier le projet ${project.name}`}
                 >
                   ×
                 </button>

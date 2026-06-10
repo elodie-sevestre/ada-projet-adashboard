@@ -47,6 +47,8 @@ POSTGRES_USER=ton_user
 POSTGRES_PASSWORD=ton_mot_de_passe
 POSTGRES_DB=adashboard
 POSTGRES_PORT=5432
+POSTGRES_HOST=localhost
+PORT=3000
 ```
 
 ### 3. Lancer la base de données
@@ -93,6 +95,8 @@ ada-projet-adashboard/
 │       ├── server.js               # Point d'entrée Express
 │       ├── router.js               # Routeur principal
 │       ├── db.js                   # Connexion PostgreSQL (pool)
+│       ├── middlewares/
+│       │   └── errorHandler.js     # Gestion centralisée des erreurs (404, 500, erreurs pg)
 │       └── routes/
 │           ├── categoriesRouter.js # Routes /categories
 │           ├── skillsRouter.js     # Routes /skills
@@ -105,6 +109,7 @@ ada-projet-adashboard/
 │   └── src/
 │       ├── App.jsx                 # Composant racine + navigation
 │       ├── main.jsx                # Point d'entrée React
+│       ├── api.js                  # URL de base de l'API (configurable via VITE_API_URL)
 │       ├── index.css               # Styles globaux
 │       └── components/
 │           ├── Header.jsx          # Navigation entre les vues
@@ -162,6 +167,24 @@ created_at          validated               description
 | DELETE | `/projects/:id/skills/:skillId` | Dissocier une skill d'un projet |
 
 ---
+
+## Gestion des erreurs
+
+L'API renvoie des erreurs au format JSON `{ "error": "message" }` :
+
+| Code | Cas |
+| ---- | --- |
+| 400  | Champ requis manquant, format de paramètre invalide, référence inexistante |
+| 404  | Ressource ou route introuvable |
+| 409  | Doublon (ex : skill déjà associée au projet) |
+| 500  | Erreur interne (détails loggés côté serveur uniquement) |
+
+Les promesses rejetées des handlers async sont transmises automatiquement
+par Express 5 au middleware `errorHandler`, qui traduit les codes d'erreur
+PostgreSQL courants en réponses HTTP explicites.
+
+---
+
 
 ## Réinitialiser la base de données
 

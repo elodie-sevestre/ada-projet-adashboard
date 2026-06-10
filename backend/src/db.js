@@ -10,19 +10,22 @@ import dotenv from "dotenv";
 dotenv.config();
 
 // Création du pool avec les paramètres de connexion issus du .env
+// L'hôte est configurable (utile si la base tourne ailleurs qu'en local,
+// par exemple dans un conteneur Docker sur un autre réseau)
 const pool = new Pool({
   user: process.env.POSTGRES_USER,
-  host: "localhost",
+  host: process.env.POSTGRES_HOST || "localhost",
   database: process.env.POSTGRES_DB,
   password: process.env.POSTGRES_PASSWORD,
-  port: process.env.POSTGRES_PORT,
+  port: process.env.POSTGRES_PORT || 5432,
 });
 
 // Test de connexion au démarrage : affiche un message selon le résultat
 pool
   .connect()
-  .then(() => {
+  .then((client) => {
     console.log("🟢 Connected to the database");
+    client.release(); // rend la connexion au pool au lieu de la garder occupée
   })
   .catch((err) => {
     console.error("🔴 Error connecting to the database", err);

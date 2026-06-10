@@ -2,6 +2,10 @@
 // Ce routeur gère les opérations sur la table "categories".
 // Il expose également une route imbriquée pour récupérer
 // les skills d'une catégorie avec leur progression.
+//
+// Gestion d'erreurs : les promesses rejetées (erreurs SQL...) sont
+// transmises automatiquement par Express 5 au middleware errorHandler.
+// Ici on ne gère que les cas métier : 400 (entrée invalide) et 404 (introuvable).
 
 import express from "express";
 import pool from "../db.js";
@@ -32,11 +36,14 @@ categoriesRouter.get("/:id", async (req, res) => {
     "SELECT id, name FROM categories WHERE id = $1",
     [req.params.id]
   );
+  if (!rows[0]) {
+    return res.status(404).json({ error: "Catégorie introuvable" });
+  }
   res.json(rows[0]);
 });
 
 // GET /categories/:id/skills - Récupère les skills d'une catégorie
-// Inclut les projets dans lesquels chaque skill a été pratiquée
+// Inclut les projets (id + nom) dans lesquels chaque skill a été pratiquée
 categoriesRouter.get("/:id/skills", async (req, res) => {
   const { rows } = await pool.query(
     `SELECT
@@ -44,7 +51,10 @@ categoriesRouter.get("/:id/skills", async (req, res) => {
       skills.description,
       skills.validated,
       COALESCE(
-        JSON_AGG(projects.name ORDER BY projects.name) FILTER (WHERE projects.id IS NOT NULL),
+        JSON_AGG(
+          JSON_BUILD_OBJECT('id', projects.id, 'name', projects.name)
+          ORDER BY projects.name
+        ) FILTER (WHERE projects.id IS NOT NULL),
         '[]'
       ) AS projects
     FROM skills
@@ -61,18 +71,26 @@ categoriesRouter.get("/:id/skills", async (req, res) => {
 // POST /categories - Crée une nouvelle catégorie
 // Attend dans le body : { name }
 categoriesRouter.post("/", async (req, res) => {
+  const { name } = req.body;
+  if (!name?.trim()) {
+    return res.status(400).json({ error: "Le champ name est requis" });
+  }
   const { rows } = await pool.query(
     "INSERT INTO categories (name) VALUES ($1) RETURNING *",
-    [req.body.name]
+    [name.trim()]
   );
   res.status(201).json(rows[0]);
 });
 
 // DELETE /categories/:id - Supprime une catégorie par son id
+// (les skills associées sont supprimées en cascade côté base)
 categoriesRouter.delete("/:id", async (req, res) => {
   const { rows } = await pool.query(
     "DELETE FROM categories WHERE id = $1 RETURNING *",
     [req.params.id]
   );
+  if (!rows[0]) {
+    return res.status(404).json({ error: "Catégorie introuvable" });
+  }
   res.json(rows[0]);
 });

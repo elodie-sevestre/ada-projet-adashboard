@@ -3,6 +3,7 @@
 // Affiche les projets sous forme de cartes et permet d'en créer de nouveaux.
 
 import { useState, useEffect } from "react";
+import { API_URL } from "../api";
 import ProjectCard from "./ProjectCard";
 
 function Projects() {
@@ -20,7 +21,7 @@ function Projects() {
 
   const fetchProjects = async () => {
     try {
-      const response = await fetch("http://localhost:3000/projects");
+      const response = await fetch(`${API_URL}/projects`);
       const data = await response.json();
       setProjects(data);
     } catch (err) {
@@ -39,7 +40,7 @@ function Projects() {
   const handleAddProject = async () => {
     if (!newProject.name.trim()) return;
     try {
-      await fetch("http://localhost:3000/projects", {
+      await fetch(`${API_URL}/projects`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newProject),

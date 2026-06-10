@@ -6,6 +6,7 @@
 // total_skills et validated_skills de toutes les catégories.
 
 import { useState, useEffect } from "react";
+import { API_URL } from "../api";
 import CategoryCard from "./CategoryCard";
 
 function Categories() {
@@ -15,7 +16,7 @@ function Categories() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch("http://localhost:3000/categories");
+        const response = await fetch(`${API_URL}/categories`);
         const data = await response.json();
         setCategories(data);
       } catch (err) {

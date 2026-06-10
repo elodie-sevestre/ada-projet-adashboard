@@ -12,6 +12,7 @@
 //   - onChange : callback passé à chaque SkillItem pour rafraîchir après modification
 
 import { useState, useEffect } from "react";
+import { API_URL } from "../api";
 import SkillItem from "./SkillItem";
 
 // Même palette que CategoryCard pour cohérence visuelle
@@ -31,7 +32,7 @@ function SkillPopup({ category, skills, onClose, onChange }) {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await fetch("http://localhost:3000/projects");
+        const response = await fetch(`${API_URL}/projects`);
         const data = await response.json();
         setAllProjects(data);
       } catch (err) {

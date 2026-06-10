@@ -10,6 +10,7 @@
 //   - onRefresh : callback pour forcer le rechargement de la liste parente
 
 import { useState, useEffect } from "react";
+import { API_URL } from "../api";
 import SkillPopup from "./SkillPopup";
 
 // Palette de couleurs désaturées harmonisée avec le thème revue scientifique
@@ -38,7 +39,7 @@ function CategoryCard({ category, onRefresh }) {
   const fetchSkills = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3000/categories/${category.id}/skills`
+        `${API_URL}/categories/${category.id}/skills`
       );
       const data = await response.json();
       setSkills(data);
@@ -54,7 +55,7 @@ function CategoryCard({ category, onRefresh }) {
   const handleAddSkill = async () => {
     if (!inputSkill.trim()) return;
     try {
-      await fetch("http://localhost:3000/skills/", {
+      await fetch(`${API_URL}/skills/`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ description: inputSkill, category_id: category.id }),

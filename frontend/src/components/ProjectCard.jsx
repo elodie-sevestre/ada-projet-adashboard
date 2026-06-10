@@ -8,6 +8,7 @@
 //   - onRefresh : callback pour forcer le rechargement de la liste parente
 
 import { useState } from "react";
+import { API_URL } from "../api";
 
 // Couleurs de fond associées aux statuts
 const STATUS_COLORS = {
@@ -54,7 +55,7 @@ function ProjectCard({ project, onRefresh }) {
 
   const handleSave = async () => {
     try {
-      await fetch(`http://localhost:3000/projects/${project.id}`, {
+      await fetch(`${API_URL}/projects/${project.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -68,7 +69,7 @@ function ProjectCard({ project, onRefresh }) {
 
   const handleDelete = async () => {
     try {
-      await fetch(`http://localhost:3000/projects/${project.id}`, {
+      await fetch(`${API_URL}/projects/${project.id}`, {
         method: "DELETE",
       });
       onRefresh();
