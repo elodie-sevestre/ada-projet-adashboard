@@ -2,15 +2,15 @@
 
 Dashboard de suivi de compétences et de projets réalisé dans le cadre de la formation Ada Tech School.
 
-Permet de visualiser sa progression par catégorie de compétences, d'associer des compétences à des projets, et de gérer sa liste de projets.
+Permet de visualiser sa progression par catégorie de compétences, d'associer des compétences à des projets, et de gérer sa liste de projets sous forme de kanban.
 
 ---
 
 ## Stack technique
 
-**Frontend** — React 19 / Vite / CSS vanilla  
-**Backend** — Node.js / Express 5  
-**Base de données** — PostgreSQL 17 (via Docker)  
+**Frontend** — React 19 / Vite / CSS vanilla / @dnd-kit (drag & drop)
+**Backend** — Node.js / Express 5
+**Base de données** — PostgreSQL 17 (via Docker)
 **ORM** — pg (driver natif PostgreSQL)
 
 ---
@@ -58,6 +58,15 @@ docker compose up -d
 ```
 
 ### 4. Créer les tables et insérer les données
+
+Via Docker (recommandé sur Windows) :
+
+```bash
+docker exec -i <nom_du_conteneur> psql -U ton_user -d adashboard -f /dev/stdin < database/migration_up.sql
+docker exec -i <nom_du_conteneur> psql -U ton_user -d adashboard -f /dev/stdin < database/seed.sql
+```
+
+Ou directement si `psql` est installé :
 
 ```bash
 psql -h localhost -U ton_user -d adashboard -f database/migration_up.sql
@@ -115,13 +124,34 @@ ada-projet-adashboard/
 │           ├── Header.jsx          # Navigation entre les vues
 │           ├── AddSkillForm.jsx    # Formulaire global d'ajout de compétence
 │           ├── Categories.jsx      # Vue compétences
-│           ├── CategoryCard.jsx    # Carte catégorie + barre de progression
+│           ├── CategoryCard.jsx    # Carte catégorie + barre de progression + édition
 │           ├── SkillPopup.jsx      # Popup liste des skills
-│           ├── SkillItem.jsx       # Ligne skill + association projets
-│           ├── Projects.jsx        # Vue projets
-│           └── ProjectCard.jsx     # Carte projet (lecture + édition)
+│           ├── SkillItem.jsx       # Ligne skill + édition inline + association projets
+│           ├── Projects.jsx        # Vue kanban (drag & drop par statut)
+│           └── ProjectCard.jsx     # Carte projet repliable (lecture + édition)
 └── docker-compose.yml
 ```
+
+---
+
+## Fonctionnalités
+
+### Vue Compétences
+
+- Progression globale et par catégorie (barres de progression)
+- Ajout d'une compétence depuis la vue globale (catégorie existante ou nouvelle créée à la volée)
+- Ajout d'une compétence depuis une carte catégorie
+- Modification inline du nom de catégorie et de la description de compétence
+- Suppression de catégorie (avec confirmation, cascade sur les skills)
+- Association / dissociation de projets sur chaque compétence
+- Validation / invalidation d'une compétence via checkbox
+
+### Vue Projets
+
+- Kanban trois colonnes : **À faire** / **En cours** / **Terminé**
+- Déplacement des cartes par drag & drop (mise à jour du statut en base)
+- Carte repliable : titre, description et statut toujours visibles ; dates et actions accessibles via `▾`
+- Création, modification et suppression de projets
 
 ---
 
@@ -133,7 +163,7 @@ categories          skills                  projects
 id                  id                      id
 name                description             name
 created_at          validated               description
-                    category_id ──────────> id  status
+                    category_id ──────────> id  status (TODO / IN_PROGRESS / DONE)
                     created_at              started_at
                                             finished_at
                                             created_at
@@ -161,7 +191,7 @@ created_at          validated               description
 | PUT     | `/skills/:id`                   | Modifier la description d'une skill          |
 | PATCH   | `/skills/:id`                   | Basculer le statut validé                    |
 | DELETE  | `/skills/:id`                   | Supprimer une skill                          |
-| GET     | `/projects`                     | Tous les projets                             |
+| GET     | `/projects`                     | Tous les projets (dates en ISO YYYY-MM-DD)   |
 | POST    | `/projects`                     | Créer un projet                              |
 | PUT     | `/projects/:id`                 | Modifier un projet                           |
 | DELETE  | `/projects/:id`                 | Supprimer un projet                          |
@@ -191,12 +221,10 @@ PostgreSQL courants en réponses HTTP explicites.
 ## Réinitialiser la base de données
 
 ```bash
-# Supprimer toutes les tables
-psql -h localhost -U ton_user -d adashboard -f database/migration_down.sql
-
-# Recréer et repeupler
-psql -h localhost -U ton_user -d adashboard -f database/migration_up.sql
-psql -h localhost -U ton_user -d adashboard -f database/seed.sql
+# Via Docker (recommandé sur Windows)
+docker exec -i <nom_du_conteneur> psql -U ton_user -d adashboard -f /dev/stdin < database/migration_down.sql
+docker exec -i <nom_du_conteneur> psql -U ton_user -d adashboard -f /dev/stdin < database/migration_up.sql
+docker exec -i <nom_du_conteneur> psql -U ton_user -d adashboard -f /dev/stdin < database/seed.sql
 ```
 
 Ou via Docker pour tout repartir de zéro :
