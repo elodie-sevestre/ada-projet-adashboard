@@ -113,6 +113,7 @@ ada-projet-adashboard/
 │       ├── index.css               # Styles globaux
 │       └── components/
 │           ├── Header.jsx          # Navigation entre les vues
+│           ├── AddSkillForm.jsx    # Formulaire global d'ajout de compétence
 │           ├── Categories.jsx      # Vue compétences
 │           ├── CategoryCard.jsx    # Carte catégorie + barre de progression
 │           ├── SkillPopup.jsx      # Popup liste des skills
@@ -148,23 +149,25 @@ created_at          validated               description
 
 ## API
 
-| Méthode | Route | Description |
-|---------|-------|-------------|
-| GET | `/categories` | Toutes les catégories avec progression |
-| GET | `/categories/:id/skills` | Skills d'une catégorie avec projets associés |
-| POST | `/categories` | Créer une catégorie |
-| DELETE | `/categories/:id` | Supprimer une catégorie |
-| GET | `/skills` | Toutes les skills |
-| POST | `/skills` | Créer une skill |
-| PATCH | `/skills/:id` | Basculer le statut validé |
-| DELETE | `/skills/:id` | Supprimer une skill |
-| GET | `/projects` | Tous les projets |
-| POST | `/projects` | Créer un projet |
-| PUT | `/projects/:id` | Modifier un projet |
-| DELETE | `/projects/:id` | Supprimer un projet |
-| GET | `/projects/:id/skills` | Skills pratiquées dans un projet |
-| POST | `/projects/:id/skills` | Associer une skill à un projet |
-| DELETE | `/projects/:id/skills/:skillId` | Dissocier une skill d'un projet |
+| Méthode | Route                           | Description                                  |
+| ------- | ------------------------------- | -------------------------------------------- |
+| GET     | `/categories`                   | Toutes les catégories avec progression       |
+| GET     | `/categories/:id/skills`        | Skills d'une catégorie avec projets associés |
+| POST    | `/categories`                   | Créer une catégorie                          |
+| PATCH   | `/categories/:id`               | Modifier le nom d'une catégorie              |
+| DELETE  | `/categories/:id`               | Supprimer une catégorie                      |
+| GET     | `/skills`                       | Toutes les skills                            |
+| POST    | `/skills`                       | Créer une skill                              |
+| PUT     | `/skills/:id`                   | Modifier la description d'une skill          |
+| PATCH   | `/skills/:id`                   | Basculer le statut validé                    |
+| DELETE  | `/skills/:id`                   | Supprimer une skill                          |
+| GET     | `/projects`                     | Tous les projets                             |
+| POST    | `/projects`                     | Créer un projet                              |
+| PUT     | `/projects/:id`                 | Modifier un projet                           |
+| DELETE  | `/projects/:id`                 | Supprimer un projet                          |
+| GET     | `/projects/:id/skills`          | Skills pratiquées dans un projet             |
+| POST    | `/projects/:id/skills`          | Associer une skill à un projet               |
+| DELETE  | `/projects/:id/skills/:skillId` | Dissocier une skill d'un projet              |
 
 ---
 
@@ -172,19 +175,18 @@ created_at          validated               description
 
 L'API renvoie des erreurs au format JSON `{ "error": "message" }` :
 
-| Code | Cas |
-| ---- | --- |
+| Code | Cas                                                                        |
+| ---- | -------------------------------------------------------------------------- |
 | 400  | Champ requis manquant, format de paramètre invalide, référence inexistante |
-| 404  | Ressource ou route introuvable |
-| 409  | Doublon (ex : skill déjà associée au projet) |
-| 500  | Erreur interne (détails loggés côté serveur uniquement) |
+| 404  | Ressource ou route introuvable                                             |
+| 409  | Doublon (ex : skill déjà associée au projet)                               |
+| 500  | Erreur interne (détails loggés côté serveur uniquement)                    |
 
 Les promesses rejetées des handlers async sont transmises automatiquement
 par Express 5 au middleware `errorHandler`, qui traduit les codes d'erreur
 PostgreSQL courants en réponses HTTP explicites.
 
 ---
-
 
 ## Réinitialiser la base de données
 
