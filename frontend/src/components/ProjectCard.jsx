@@ -3,7 +3,10 @@
 //   - mode lecture  : nom, description, statut, dates
 //   - mode édition  : formulaire avec calendrier natif et select statut
 //
-// Accepte une prop isDragging pour adapter le style pendant le drag.
+// Les dates arrivent de l'API au format ISO YYYY-MM-DD (ou YYYY-MM-DDTHH:mm:ss.sssZ).
+// - Pour l'input type="date" : on tronque à YYYY-MM-DD, c'est le bon format natif.
+// - Pour l'affichage : on formate en DD/MM/YYYY via formatDate().
+// Pas de conversion aller-retour : on renvoie toujours YYYY-MM-DD au PUT.
 //
 // Props :
 //   - project    : objet projet (id, name, description, status, started_at, finished_at)
@@ -13,7 +16,6 @@
 import { useState } from "react";
 import { API_URL } from "../api";
 
-// Couleurs de fond associées aux statuts
 const STATUS_COLORS = {
   "TODO":        "#F0ECD4",
   "IN_PROGRESS": "#D6E8F0",
@@ -32,21 +34,29 @@ const STATUS_LABEL = {
   "DONE":        "Terminé",
 };
 
+// Tronque une date ISO (YYYY-MM-DDTHH:… ou YYYY-MM-DD) à YYYY-MM-DD
+// pour l'utiliser dans un input type="date"
+const toInputDate = (str) => {
+  if (!str) return "";
+  return str.slice(0, 10); // "2026-05-19T00:00:00.000Z" → "2026-05-19"
+};
+
+// Formate YYYY-MM-DD en DD/MM/YYYY pour l'affichage
+const formatDate = (str) => {
+  if (!str) return "—";
+  const d = toInputDate(str); // normalise si besoin
+  const [y, m, day] = d.split("-");
+  return `${day}/${m}/${y}`;
+};
+
 function ProjectCard({ project, onRefresh, isDragging = false }) {
   const [editMode, setEditMode] = useState(false);
-
-  // Convertit DD-MM-YYYY vers YYYY-MM-DD pour l'input type="date"
-  const toInputDate = (str) => {
-    if (!str) return "";
-    const [d, m, y] = str.split("-");
-    return `${y}-${m}-${d}`;
-  };
 
   const [form, setForm] = useState({
     name:        project.name,
     description: project.description || "",
     status:      project.status,
-    started_at:  toInputDate(project.started_at),
+    started_at:  toInputDate(project.started_at),  // YYYY-MM-DD pour l'input
     finished_at: toInputDate(project.finished_at),
   });
 
@@ -54,12 +64,17 @@ function ProjectCard({ project, onRefresh, isDragging = false }) {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // Le form contient déjà des dates en YYYY-MM-DD : on envoie tel quel
   const handleSave = async () => {
     try {
       await fetch(`${API_URL}/projects/${project.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          started_at:  form.started_at  || null,
+          finished_at: form.finished_at || null,
+        }),
       });
       setEditMode(false);
       onRefresh();
@@ -146,8 +161,8 @@ function ProjectCard({ project, onRefresh, isDragging = false }) {
         {STATUS_LABEL[project.status]}
       </p>
       <div className="project-dates">
-        <span>Début : {project.started_at || "—"}</span>
-        <span>Fin : {project.finished_at || "—"}</span>
+        <span>Début : {formatDate(project.started_at)}</span>
+        <span>Fin : {formatDate(project.finished_at)}</span>
       </div>
       <div className="card-actions">
         <button

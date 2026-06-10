@@ -2,23 +2,24 @@
 // Ce routeur gère les opérations CRUD sur la table "projects".
 // Il expose également des routes pour gérer les liaisons projects_skills.
 //
-// Gestion d'erreurs : les promesses rejetées (erreurs SQL...) sont
-// transmises automatiquement par Express 5 au middleware errorHandler.
-// Ici on ne gère que les cas métier : 400 (entrée invalide) et 404 (introuvable).
+// Les dates sont renvoyées au format ISO (YYYY-MM-DD) directement depuis PostgreSQL.
+// La mise en forme pour l'affichage (DD/MM/YYYY) est faite côté front uniquement.
+// Cela évite toute conversion aller-retour et garantit que les PUT reçoivent
+// toujours des dates dans le format attendu par PostgreSQL.
+//
+// Gestion d'erreurs : les promesses rejetées sont transmises automatiquement
+// par Express 5 au middleware errorHandler.
 
 import express from "express";
 import pool from "../db.js";
 
 export const projectsRouter = express.Router();
 
-// GET /projects - Récupère tous les projets
+// GET /projects - Récupère tous les projets (dates en ISO YYYY-MM-DD)
 projectsRouter.get("/", async (req, res) => {
   const { rows } = await pool.query(
-    `SELECT
-      id, name, description, status,
-      TO_CHAR(started_at, 'DD-MM-YYYY') AS started_at,
-      TO_CHAR(finished_at, 'DD-MM-YYYY') AS finished_at,
-      TO_CHAR(created_at, 'DD-MM-YYYY') AS created_at
+    `SELECT id, name, description, status,
+      started_at, finished_at, created_at
     FROM projects
     ORDER BY id`
   );
@@ -29,9 +30,7 @@ projectsRouter.get("/", async (req, res) => {
 projectsRouter.get("/:id", async (req, res) => {
   const { rows } = await pool.query(
     `SELECT id, name, description, status,
-      TO_CHAR(started_at, 'DD-MM-YYYY') AS started_at,
-      TO_CHAR(finished_at, 'DD-MM-YYYY') AS finished_at,
-      TO_CHAR(created_at, 'DD-MM-YYYY') AS created_at
+      started_at, finished_at, created_at
     FROM projects WHERE id = $1`,
     [req.params.id]
   );
@@ -56,23 +55,21 @@ projectsRouter.get("/:id/skills", async (req, res) => {
 });
 
 // POST /projects - Crée un nouveau projet
-// Attend dans le body : { name, description }
+// Attend dans le body : { name, description, status, started_at, finished_at }
 projectsRouter.post("/", async (req, res) => {
-  const { name, description } = req.body;
+  const { name, description, status, started_at, finished_at } = req.body;
   if (!name?.trim()) {
     return res.status(400).json({ error: "Le champ name est requis" });
   }
   const { rows } = await pool.query(
-    "INSERT INTO projects (name, description) VALUES ($1, $2) RETURNING *",
-    [name.trim(), description]
+    `INSERT INTO projects (name, description, status, started_at, finished_at)
+    VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+    [name.trim(), description, status || "TODO", started_at || null, finished_at || null]
   );
   res.status(201).json(rows[0]);
 });
 
 // POST /projects/:id/skills - Associe une skill à un projet
-// Attend dans le body : { skill_id }
-// Un doublon (liaison déjà existante) renvoie 409 via le middleware d'erreur,
-// une référence inexistante (projet ou skill) renvoie 400 (violation de clé étrangère).
 projectsRouter.post("/:id/skills", async (req, res) => {
   if (!req.body.skill_id) {
     return res.status(400).json({ error: "Le champ skill_id est requis" });
@@ -98,6 +95,7 @@ projectsRouter.delete("/:id/skills/:skillId", async (req, res) => {
 
 // PUT /projects/:id - Met à jour un projet existant
 // Attend dans le body : { name, description, status, started_at, finished_at }
+// Les dates doivent être au format YYYY-MM-DD ou null
 projectsRouter.put("/:id", async (req, res) => {
   const { name, description, status, started_at, finished_at } = req.body;
   if (!name?.trim()) {
@@ -111,7 +109,7 @@ projectsRouter.put("/:id", async (req, res) => {
       name.trim(),
       description,
       status,
-      started_at || null, // une chaîne vide ferait planter le cast en DATE
+      started_at || null,
       finished_at || null,
       req.params.id,
     ]
@@ -123,7 +121,6 @@ projectsRouter.put("/:id", async (req, res) => {
 });
 
 // DELETE /projects/:id - Supprime un projet par son id
-// (les liaisons projects_skills sont supprimées en cascade côté base)
 projectsRouter.delete("/:id", async (req, res) => {
   const { rows } = await pool.query(
     "DELETE FROM projects WHERE id = $1 RETURNING *",
