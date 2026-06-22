@@ -18,8 +18,8 @@ INSERT INTO projects (name, description, status, started_at, finished_at) VALUES
     ('adaquiz',      'quiz interactif',                                            'DONE',  '2026-03-09', '2026-03-20'),
     ('adalgo',       'tests unitaires',                                            'DONE',  '2026-03-24', '2026-03-27'),
     ('adataviz',     'visualisation de données API',                               'DONE',  '2026-04-07', '2026-04-17'),
-    ('adatabase',    'base de données de gestion de ressources pédagogiques',      'DONE',  '2026-05-04', '2026-05-07'),
-    ('adapi',        'API REST pour gérer DB adatabase',                           'DONE',  '2026-05-07', '2026-05-13'),
+    ('adb',    'base de données de gestion de ressources pédagogiques',      'DONE',  '2026-05-04', '2026-05-07'),
+    ('adapi',        'API REST pour gérer DB adb',                           'DONE',  '2026-05-07', '2026-05-13'),
     ('adataviz 2.0', 'transformer Adataviz en projet React',                       'DONE',  '2026-05-13', '2026-05-18'),
     ('adashboard',   'création dashboard pour suivi projets école',                'IN_PROGRESS', '2026-05-19', NULL);
 
@@ -69,7 +69,7 @@ INSERT INTO skills (description, validated, category_id) VALUES
     ('Je sais insérer des données dans une base de données',                  true,  4),
     ('Je sais écrire des requêtes SELECT avec différents filtres',            true,  4),
     ('Je sais utiliser les jointures SQL',                                    true,  4),
-    ('Je sais me connecter à PostgreSQL depuis un backend Express',           true,  4),
+    ('Je sais me connecter à PostgreSQL depuis un server Express',           true,  4),
     ('Je sais gérer les requêtes SQL avec pg',                                true,  4);
 
 -- Skills React (category_id = 5)
@@ -121,7 +121,7 @@ INSERT INTO projects_skills (project_id, skill_id) VALUES
 INSERT INTO projects_skills (project_id, skill_id) VALUES
     (5, 4), (5, 6), (5, 8), (5, 13), (5, 14), (5, 15), (5, 16), (5, 17), (5, 18), (5, 19);
 
--- adatabase (6) : SQL
+-- adb (6) : SQL
 INSERT INTO projects_skills (project_id, skill_id) VALUES
     (6, 30), (6, 31), (6, 32), (6, 33), (6, 34);
 

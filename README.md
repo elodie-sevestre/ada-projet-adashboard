@@ -8,8 +8,8 @@ Permet de visualiser sa progression par catégorie de compétences, d'associer d
 
 ## Stack technique
 
-**Frontend** — React 19 / Vite / CSS vanilla / @dnd-kit (drag & drop)
-**Backend** — Node.js / Express 5
+**Client** — React 19 / Vite / CSS vanilla / @dnd-kit (drag & drop)
+**Server** — Node.js / Express 5
 **Base de données** — PostgreSQL 17 (via Docker)
 **ORM** — pg (driver natif PostgreSQL)
 
@@ -19,7 +19,7 @@ Permet de visualiser sa progression par catégorie de compétences, d'associer d
 
 - [Node.js](https://nodejs.org/) v18+
 - [Docker](https://www.docker.com/) et Docker Compose
-- [pnpm](https://pnpm.io/) (frontend)
+- [pnpm](https://pnpm.io/) (client)
 
 ---
 
@@ -62,31 +62,31 @@ docker compose up -d
 Via Docker (recommandé sur Windows) :
 
 ```bash
-docker exec -i <nom_du_conteneur> psql -U ton_user -d adashboard -f /dev/stdin < database/migration_up.sql
-docker exec -i <nom_du_conteneur> psql -U ton_user -d adashboard -f /dev/stdin < database/seed.sql
+docker exec -i <nom_du_conteneur> psql -U ton_user -d adashboard -f /dev/stdin < db/migration_up.sql
+docker exec -i <nom_du_conteneur> psql -U ton_user -d adashboard -f /dev/stdin < db/seed.sql
 ```
 
 Ou directement si `psql` est installé :
 
 ```bash
-psql -h localhost -U ton_user -d adashboard -f database/migration_up.sql
-psql -h localhost -U ton_user -d adashboard -f database/seed.sql
+psql -h localhost -U ton_user -d adashboard -f db/migration_up.sql
+psql -h localhost -U ton_user -d adashboard -f db/seed.sql
 ```
 
-### 5. Lancer le backend
+### 5. Lancer le server
 
 ```bash
-cd backend
+cd server
 npm install
 npm start
 ```
 
 Le serveur écoute sur `http://localhost:3000`.
 
-### 6. Lancer le frontend
+### 6. Lancer le client
 
 ```bash
-cd frontend
+cd client
 pnpm install
 pnpm dev
 ```
@@ -99,7 +99,7 @@ L'application est accessible sur `http://localhost:5173`.
 
 ```
 ada-projet-adashboard/
-├── backend/
+├── server/
 │   └── src/
 │       ├── server.js               # Point d'entrée Express
 │       ├── router.js               # Routeur principal
@@ -110,11 +110,11 @@ ada-projet-adashboard/
 │           ├── categoriesRouter.js # Routes /categories
 │           ├── skillsRouter.js     # Routes /skills
 │           └── projectsRouter.js   # Routes /projects
-├── database/
+├── db/
 │   ├── migration_up.sql            # Création des tables
 │   ├── migration_down.sql          # Suppression des tables
 │   └── seed.sql                    # Données initiales
-├── frontend/
+├── client/
 │   └── src/
 │       ├── App.jsx                 # Composant racine + navigation
 │       ├── main.jsx                # Point d'entrée React
@@ -222,9 +222,9 @@ PostgreSQL courants en réponses HTTP explicites.
 
 ```bash
 # Via Docker (recommandé sur Windows)
-docker exec -i <nom_du_conteneur> psql -U ton_user -d adashboard -f /dev/stdin < database/migration_down.sql
-docker exec -i <nom_du_conteneur> psql -U ton_user -d adashboard -f /dev/stdin < database/migration_up.sql
-docker exec -i <nom_du_conteneur> psql -U ton_user -d adashboard -f /dev/stdin < database/seed.sql
+docker exec -i <nom_du_conteneur> psql -U ton_user -d adashboard -f /dev/stdin < db/migration_down.sql
+docker exec -i <nom_du_conteneur> psql -U ton_user -d adashboard -f /dev/stdin < db/migration_up.sql
+docker exec -i <nom_du_conteneur> psql -U ton_user -d adashboard -f /dev/stdin < db/seed.sql
 ```
 
 Ou via Docker pour tout repartir de zéro :

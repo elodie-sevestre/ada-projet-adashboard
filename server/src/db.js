@@ -15,7 +15,7 @@ dotenv.config();
 const pool = new Pool({
   user: process.env.POSTGRES_USER,
   host: process.env.POSTGRES_HOST || "localhost",
-  database: process.env.POSTGRES_DB,
+  db: process.env.POSTGRES_DB,
   password: process.env.POSTGRES_PASSWORD,
   port: process.env.POSTGRES_PORT || 5432,
 });
@@ -24,11 +24,11 @@ const pool = new Pool({
 pool
   .connect()
   .then((client) => {
-    console.log("🟢 Connected to the database");
+    console.log("🟢 Connected to the db");
     client.release(); // rend la connexion au pool au lieu de la garder occupée
   })
   .catch((err) => {
-    console.error("🔴 Error connecting to the database", err);
+    console.error("🔴 Error connecting to the db", err);
   });
 
 export default pool;
