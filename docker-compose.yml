@@ -1,7 +1,7 @@
 services:
   postgres:
     image: postgres:17.5-alpine
-    container_name: adb_local
+    container_name: adatabase_local
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
