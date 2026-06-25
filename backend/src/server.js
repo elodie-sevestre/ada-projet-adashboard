@@ -12,7 +12,7 @@ const app = express();
 // Port configurable via .env, avec valeur par défaut pour le dev local
 const PORT = process.env.PORT || 3000;
 
-// Autorise les requêtes cross-origin (nécessaire pour le client React sur un port différent)
+// Autorise les requêtes cross-origin (nécessaire pour le frontend React sur un port différent)
 app.use(cors());
 
 // Permet de lire le corps des requêtes au format JSON

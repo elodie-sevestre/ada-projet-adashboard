@@ -23,9 +23,9 @@ const pool = new Pool({
 // Test de connexion au démarrage : affiche un message selon le résultat
 pool
   .connect()
-  .then((client) => {
+  .then((frontend) => {
     console.log("🟢 Connected to the db");
-    client.release(); // rend la connexion au pool au lieu de la garder occupée
+    frontend.release(); // rend la connexion au pool au lieu de la garder occupée
   })
   .catch((err) => {
     console.error("🔴 Error connecting to the db", err);
