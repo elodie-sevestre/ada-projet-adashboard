@@ -25,80 +25,80 @@ INSERT INTO projects (name, description, status, started_at, finished_at) VALUES
 
 -- Skills HTML / CSS (category_id = 1)
 INSERT INTO skills (description, validated, category_id) VALUES
-    ('Je sais créer une structure HTML de base',                              true,  1),
-    ('Je sais utiliser la majorité des balises HTML de base',                 true,  1),
-    ('Je sais ajouter des images et du texte dans une page HTML',             true,  1),
-    ('Je sais styliser une page avec CSS',                                    true,  1),
-    ('Je sais gérer les marges, paddings et alignements avec CSS',            true,  1),
-    ('Je sais utiliser Flexbox et Grid pour positionner des éléments',        true,  1),
-    ('Je sais gérer une barre de navigation et un footer',                    true,  1),
-    ('Je sais rendre une page responsive pour différents appareils',          false, 1),
-    ('Je sais adapter mes balises à une taille d''écran différente',          false, 1);
+    ('Je sais créer une structure HTML de base',                               ,  1),
+    ('Je sais utiliser la majorité des balises HTML de base',                  ,  1),
+    ('Je sais ajouter des images et du texte dans une page HTML',              ,  1),
+    ('Je sais styliser une page avec CSS',                                     ,  1),
+    ('Je sais gérer les marges, paddings et alignements avec CSS',             ,  1),
+    ('Je sais utiliser Flexbox et Grid pour positionner des éléments',         ,  1),
+    ('Je sais gérer une barre de navigation et un footer',                     ,  1),
+    ('Je sais rendre une page responsive pour différents appareils',            , 1),
+    ('Je sais adapter mes balises à une taille d''écran différente',            , 1);
 
 -- Skills JavaScript (category_id = 2)
 INSERT INTO skills (description, validated, category_id) VALUES
-    ('Je sais utiliser les boucles et les conditions',                        true,  2),
-    ('Je maîtrise les tableaux et les objets en JS',                          true,  2),
-    ('Je sais utiliser les callbacks',                                        true,  2),
-    ('Je comprends ce qu''est une fonction asynchrone',                       true,  2),
-    ('Je sais fetch des données depuis une API',                              true,  2),
-    ('Je sais passer des paramètres d''URL dans une requête HTTP',            true,  2),
-    ('Je sais manipuler le DOM',                                              true,  2),
-    ('Je sais utiliser les événements JavaScript',                            true,  2),
-    ('Je sais créer une balise HTML via JavaScript',                          true,  2),
-    ('Je sais concevoir un algorithme pour répondre à des instructions',      true,  2),
-    ('Je sais écrire des tests unitaires',                                    true,  2),
-    ('Je sais expliquer l''intérêt du TDD',                                   false, 2);
+    ('Je sais utiliser les boucles et les conditions',                         ,  2),
+    ('Je maîtrise les tableaux et les objets en JS',                           ,  2),
+    ('Je sais utiliser les callbacks',                                         ,  2),
+    ('Je comprends ce qu''est une fonction asynchrone',                        ,  2),
+    ('Je sais fetch des données depuis une API',                               ,  2),
+    ('Je sais passer des paramètres d''URL dans une requête HTTP',             ,  2),
+    ('Je sais manipuler le DOM',                                               ,  2),
+    ('Je sais utiliser les événements JavaScript',                             ,  2),
+    ('Je sais créer une balise HTML via JavaScript',                           ,  2),
+    ('Je sais concevoir un algorithme pour répondre à des instructions',       ,  2),
+    ('Je sais écrire des tests unitaires',                                     ,  2),
+    ('Je sais expliquer l''intérêt du TDD',                                     , 2);
 
 -- Skills Node.js / Express (category_id = 3)
 INSERT INTO skills (description, validated, category_id) VALUES
-    ('Je sais exécuter un script avec Node',                                  true,  3),
-    ('Je sais importer et utiliser les modules natifs Node',                  true,  3),
-    ('Je sais importer et parser un fichier JSON',                            true,  3),
-    ('Je sais créer une API REST avec Express',                               true,  3),
-    ('Je sais structurer un projet Node.js avec Express',                     true,  3),
-    ('Je sais créer des routes CRUD',                                         true,  3),
-    ('Je sais utiliser dotenv pour les variables d''environnement',           true,  3),
-    ('Je sais utiliser nodemon pour le développement',                        true,  3),
-    ('Je sais utiliser les modules ES6 dans Node.js',                         true,  3);
+    ('Je sais exécuter un script avec Node',                                   ,  3),
+    ('Je sais importer et utiliser les modules natifs Node',                   ,  3),
+    ('Je sais importer et parser un fichier JSON',                             ,  3),
+    ('Je sais créer une API REST avec Express',                                ,  3),
+    ('Je sais structurer un projet Node.js avec Express',                      ,  3),
+    ('Je sais créer des routes CRUD',                                          ,  3),
+    ('Je sais utiliser dotenv pour les variables d''environnement',            ,  3),
+    ('Je sais utiliser nodemon pour le développement',                         ,  3),
+    ('Je sais utiliser les modules ES6 dans Node.js',                          ,  3);
 
 -- Skills SQL (category_id = 4)
 INSERT INTO skills (description, validated, category_id) VALUES
-    ('Je sais créer des tables SQL avec des contraintes',                     true,  4),
-    ('Je sais utiliser des clés étrangères et des relations entre tables',    true,  4),
-    ('Je sais insérer des données dans une base de données',                  true,  4),
-    ('Je sais écrire des requêtes SELECT avec différents filtres',            true,  4),
-    ('Je sais utiliser les jointures SQL',                                    true,  4),
-    ('Je sais me connecter à PostgreSQL depuis un server Express',           true,  4),
-    ('Je sais gérer les requêtes SQL avec pg',                                true,  4);
+    ('Je sais créer des tables SQL avec des contraintes',                      ,  4),
+    ('Je sais utiliser des clés étrangères et des relations entre tables',     ,  4),
+    ('Je sais insérer des données dans une base de données',                   ,  4),
+    ('Je sais écrire des requêtes SELECT avec différents filtres',             ,  4),
+    ('Je sais utiliser les jointures SQL',                                     ,  4),
+    ('Je sais me connecter à PostgreSQL depuis un server Express',            ,  4),
+    ('Je sais gérer les requêtes SQL avec pg',                                 ,  4);
 
 -- Skills React (category_id = 5)
 INSERT INTO skills (description, validated, category_id) VALUES
-    ('Je comprends ce qu''est un composant',                                  true,  5),
-    ('Je comprends ce que sont les props et dans quel sens elles vont',       true,  5),
-    ('Je sais ce que fait useState',                                          true,  5),
-    ('Je comprends pourquoi on met [] à la fin de useEffect',                 false, 5),
-    ('Je comprends pourquoi key est obligatoire dans .map()',                 false, 5),
-    ('Je comprends pourquoi class devient className',                         true,  5),
-    ('Je vois la différence entre manipulation DOM vanilla et React',         true,  5),
-    ('Je comprends pourquoi chaque composant a son propre state',             false, 5),
-    ('Je comprends comment un callback remonte une action vers le parent',    true,  5),
-    ('Je sais initialiser un projet avec Vite',                               true,  5);
+    ('Je comprends ce qu''est un composant',                                   ,  5),
+    ('Je comprends ce que sont les props et dans quel sens elles vont',        ,  5),
+    ('Je sais ce que fait useState',                                           ,  5),
+    ('Je comprends pourquoi on met [] à la fin de useEffect',                   , 5),
+    ('Je comprends pourquoi key est obligatoire dans .map()',                   , 5),
+    ('Je comprends pourquoi class devient className',                          ,  5),
+    ('Je vois la différence entre manipulation DOM vanilla et React',          ,  5),
+    ('Je comprends pourquoi chaque composant a son propre state',               , 5),
+    ('Je comprends comment un callback remonte une action vers le parent',     ,  5),
+    ('Je sais initialiser un projet avec Vite',                                ,  5);
 
 -- Skills Git (category_id = 6)
 INSERT INTO skills (description, validated, category_id) VALUES
-    ('Je sais travailler en groupe avec Git',                                 true,  6),
-    ('Je sais créer et fusionner des branches',                               true,  6),
-    ('Je sais résoudre un conflit de merge',                                  true,  6),
-    ('Je sais écrire des messages de commit conventionnels',                  false, 6);
+    ('Je sais travailler en groupe avec Git',                                  ,  6),
+    ('Je sais créer et fusionner des branches',                                ,  6),
+    ('Je sais résoudre un conflit de merge',                                   ,  6),
+    ('Je sais écrire des messages de commit conventionnels',                    , 6);
 
 -- Skills Outils & Environnement (category_id = 7)
 INSERT INTO skills (description, validated, category_id) VALUES
-    ('Je sais installer une bibliothèque avec npm',                           true,  7),
-    ('Je sais configurer une base de données PostgreSQL avec Docker',         true,  7),
-    ('Je sais utiliser les chemins de fichiers et dossiers',                  true,  7),
-    ('Je sais expliquer ce qu''est le CRUD',                                  true,  7),
-    ('Je sais expliquer le fonctionnement d''une API RESTful',                true,  7);
+    ('Je sais installer une bibliothèque avec npm',                            ,  7),
+    ('Je sais configurer une base de données PostgreSQL avec Docker',          ,  7),
+    ('Je sais utiliser les chemins de fichiers et dossiers',                   ,  7),
+    ('Je sais expliquer ce qu''est le CRUD',                                   ,  7),
+    ('Je sais expliquer le fonctionnement d''une API RESTful',                 ,  7);
 
 -- Liaisons projects_skills
 -- adapage (1) : HTML/CSS
