@@ -3,7 +3,7 @@
 // StrictMode : outil de développement uniquement, sans effet en production
 
 import { StrictMode } from "react";
-import { createRoot } from "react-dom/frontend";
+import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.jsx";
 
