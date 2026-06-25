@@ -1,235 +1,161 @@
 # adashboard
 
-Dashboard de suivi de compétences et de projets réalisé dans le cadre de la formation Ada Tech School.
+Projet réalisé pendant ma formation à Ada Tech School.
 
-Permet de visualiser sa progression par catégorie de compétences, d'associer des compétences à des projets, et de gérer sa liste de projets sous forme de kanban.
+C'est un petit dashboard qui me permet de suivre mes compétences en code et mes projets. Je peux voir où j'en suis par catégorie de compétence, et gérer mes projets sous forme de kanban (à faire / en cours / terminé).
 
----
+## Technologies utilisées
 
-## Stack technique
-
-**Client** — React 19 / Vite / CSS vanilla / @dnd-kit (drag & drop)
-**Server** — Node.js / Express 5
-**Base de données** — PostgreSQL 17 (via Docker)
-**ORM** — pg (driver natif PostgreSQL)
-
----
-
-## Prérequis
-
-- [Node.js](https://nodejs.org/) v18+
-- [Docker](https://www.docker.com/) et Docker Compose
-- [pnpm](https://pnpm.io/) (client)
-
----
+- **Front** (`frontend/`) : React + Vite, CSS classique, @dnd-kit pour le drag & drop
+- **Back** (`backend/`) : Node.js + Express
+- **Base de données** : PostgreSQL (avec Docker)
 
 ## Installation
 
-### 1. Cloner le repo
+Il faut avoir installé avant :
+- Node.js
+- Docker
+- pnpm (pour le frontend)
+
+### 1. Cloner le projet
 
 ```bash
 git clone https://github.com/elodie-sevestre/ada-projet-adashboard.git
 cd ada-projet-adashboard
 ```
 
-### 2. Configurer les variables d'environnement
+### 2. Créer le fichier .env
 
-Créer un fichier `.env` à la racine en s'appuyant sur `.env.example` :
+Copier le fichier d'exemple :
 
 ```bash
 cp .env.example .env
 ```
 
-Renseigner les valeurs :
+Et mettre ses propres infos dedans (utilisateur, mot de passe, etc.)
 
-```
-POSTGRES_USER=ton_user
-POSTGRES_PASSWORD=ton_mot_de_passe
-POSTGRES_DB=adashboard
-POSTGRES_PORT=5432
-POSTGRES_HOST=localhost
-PORT=3000
-```
-
-### 3. Lancer la base de données
+### 3. Démarrer la base de données
 
 ```bash
 docker compose up -d
 ```
 
-### 4. Créer les tables et insérer les données
-
-Via Docker (recommandé sur Windows) :
+### 4. Créer les tables et ajouter des données de test
 
 ```bash
 docker exec -i <nom_du_conteneur> psql -U ton_user -d adashboard -f /dev/stdin < db/migration_up.sql
 docker exec -i <nom_du_conteneur> psql -U ton_user -d adashboard -f /dev/stdin < db/seed.sql
 ```
 
-Ou directement si `psql` est installé :
+### 5. Lancer le serveur
 
 ```bash
-psql -h localhost -U ton_user -d adashboard -f db/migration_up.sql
-psql -h localhost -U ton_user -d adashboard -f db/seed.sql
-```
-
-### 5. Lancer le server
-
-```bash
-cd server
+cd backend
 npm install
 npm start
 ```
 
-Le serveur écoute sur `http://localhost:3000`.
+Le serveur tourne sur `http://localhost:3000`
 
-### 6. Lancer le client
+### 6. Lancer le frontend
 
 ```bash
-cd client
+cd frontend
 pnpm install
 pnpm dev
 ```
 
-L'application est accessible sur `http://localhost:5173`.
+Le site est accessible sur `http://localhost:5173`
 
----
+## Ce que le projet permet de faire
 
-## Structure du projet
+**Côté compétences**
+- Voir sa progression globale et par catégorie
+- Ajouter une compétence (et créer une catégorie en même temps si besoin)
+- Modifier le nom d'une catégorie ou la description d'une compétence directement dans la page
+- Supprimer une catégorie
+- Lier ou délier une compétence à un projet
+- Cocher une compétence comme validée
+
+**Côté projets**
+- Vue kanban avec 3 colonnes (à faire / en cours / terminé)
+- Déplacer les cartes avec la souris (drag & drop) pour changer leur statut
+- Créer, modifier et supprimer un projet
+
+## Organisation du code
 
 ```
-ada-projet-adashboard/
-├── server/
+adashboard/
+├── backend/
 │   └── src/
-│       ├── server.js               # Point d'entrée Express
-│       ├── router.js               # Routeur principal
-│       ├── db.js                   # Connexion PostgreSQL (pool)
+│       ├── server.js          → démarre le serveur
+│       ├── router.js          → rassemble toutes les routes
+│       ├── db.js              → connexion à PostgreSQL
 │       ├── middlewares/
-│       │   └── errorHandler.js     # Gestion centralisée des erreurs (404, 500, erreurs pg)
+│       │   └── errorHandler.js → gère les erreurs (404, erreurs de la BDD, etc.)
 │       └── routes/
-│           ├── categoriesRouter.js # Routes /categories
-│           ├── skillsRouter.js     # Routes /skills
-│           └── projectsRouter.js   # Routes /projects
+│           ├── categoriesRouter.js
+│           ├── skillsRouter.js
+│           └── projectsRouter.js
 ├── db/
-│   ├── migration_up.sql            # Création des tables
-│   ├── migration_down.sql          # Suppression des tables
-│   └── seed.sql                    # Données initiales
-├── client/
-│   └── src/
-│       ├── App.jsx                 # Composant racine + navigation
-│       ├── main.jsx                # Point d'entrée React
-│       ├── api.js                  # URL de base de l'API (configurable via VITE_API_URL)
-│       ├── index.css               # Styles globaux
-│       └── components/
-│           ├── Header.jsx          # Navigation entre les vues
-│           ├── AddSkillForm.jsx    # Formulaire global d'ajout de compétence
-│           ├── Categories.jsx      # Vue compétences
-│           ├── CategoryCard.jsx    # Carte catégorie + barre de progression + édition
-│           ├── SkillPopup.jsx      # Popup liste des skills
-│           ├── SkillItem.jsx       # Ligne skill + édition inline + association projets
-│           ├── Projects.jsx        # Vue kanban (drag & drop par statut)
-│           └── ProjectCard.jsx     # Carte projet repliable (lecture + édition)
-└── docker-compose.yml
+│   ├── migration_up.sql       → crée les tables
+│   ├── migration_down.sql     → supprime les tables
+│   └── seed.sql                → données de test
+└── frontend/
+    └── src/
+        ├── App.jsx
+        ├── main.jsx
+        ├── api.js              → adresse de l'API
+        ├── constants.js
+        ├── components/
+        │   ├── Header.jsx
+        │   ├── Categories.jsx
+        │   ├── CategoryCard.jsx
+        │   ├── SkillPopup.jsx
+        │   ├── SkillItem.jsx
+        │   ├── AddSkillForm.jsx
+        │   ├── Projects.jsx
+        │   ├── ProjectCard.jsx
+        │   └── Toast.jsx       → messages de confirmation/erreur
+        └── hooks/
+            └── useToast.js
 ```
 
----
+## Les routes de l'API
 
-## Fonctionnalités
-
-### Vue Compétences
-
-- Progression globale et par catégorie (barres de progression)
-- Ajout d'une compétence depuis la vue globale (catégorie existante ou nouvelle créée à la volée)
-- Ajout d'une compétence depuis une carte catégorie
-- Modification inline du nom de catégorie et de la description de compétence
-- Suppression de catégorie (avec confirmation, cascade sur les skills)
-- Association / dissociation de projets sur chaque compétence
-- Validation / invalidation d'une compétence via checkbox
-
-### Vue Projets
-
-- Kanban trois colonnes : **À faire** / **En cours** / **Terminé**
-- Déplacement des cartes par drag & drop (mise à jour du statut en base)
-- Carte repliable : titre, description et statut toujours visibles ; dates et actions accessibles via `▾`
-- Création, modification et suppression de projets
-
----
-
-## Modèle de données
-
-```
-categories          skills                  projects
-──────────          ──────────              ──────────
-id                  id                      id
-name                description             name
-created_at          validated               description
-                    category_id ──────────> id  status (TODO / IN_PROGRESS / DONE)
-                    created_at              started_at
-                                            finished_at
-                                            created_at
-                                            updated_at
-
-                    projects_skills
-                    ──────────────
-                    project_id ──────────> projects.id
-                    skill_id   ──────────> skills.id
-```
-
----
-
-## API
-
-| Méthode | Route                           | Description                                  |
-| ------- | ------------------------------- | -------------------------------------------- |
-| GET     | `/categories`                   | Toutes les catégories avec progression       |
-| GET     | `/categories/:id/skills`        | Skills d'une catégorie avec projets associés |
-| POST    | `/categories`                   | Créer une catégorie                          |
-| PATCH   | `/categories/:id`               | Modifier le nom d'une catégorie              |
-| DELETE  | `/categories/:id`               | Supprimer une catégorie                      |
-| GET     | `/skills`                       | Toutes les skills                            |
-| POST    | `/skills`                       | Créer une skill                              |
-| PUT     | `/skills/:id`                   | Modifier la description d'une skill          |
-| PATCH   | `/skills/:id`                   | Basculer le statut validé                    |
-| DELETE  | `/skills/:id`                   | Supprimer une skill                          |
-| GET     | `/projects`                     | Tous les projets (dates en ISO YYYY-MM-DD)   |
-| POST    | `/projects`                     | Créer un projet                              |
-| PUT     | `/projects/:id`                 | Modifier un projet                           |
-| DELETE  | `/projects/:id`                 | Supprimer un projet                          |
-| GET     | `/projects/:id/skills`          | Skills pratiquées dans un projet             |
-| POST    | `/projects/:id/skills`          | Associer une skill à un projet               |
-| DELETE  | `/projects/:id/skills/:skillId` | Dissocier une skill d'un projet              |
-
----
+| Méthode | Route | Ce que ça fait |
+|---|---|---|
+| GET | /categories | Récupère toutes les catégories |
+| GET | /categories/:id/skills | Récupère les compétences d'une catégorie |
+| POST | /categories | Crée une catégorie |
+| PATCH | /categories/:id | Modifie le nom d'une catégorie |
+| DELETE | /categories/:id | Supprime une catégorie |
+| GET | /skills | Récupère toutes les compétences |
+| POST | /skills | Crée une compétence |
+| PUT | /skills/:id | Modifie une compétence |
+| PATCH | /skills/:id | Change le statut validé/non validé |
+| DELETE | /skills/:id | Supprime une compétence |
+| GET | /projects | Récupère tous les projets |
+| POST | /projects | Crée un projet |
+| PUT | /projects/:id | Modifie un projet |
+| DELETE | /projects/:id | Supprime un projet |
+| GET | /projects/:id/skills | Récupère les compétences liées à un projet |
+| POST | /projects/:id/skills | Lie une compétence à un projet |
+| DELETE | /projects/:id/skills/:skillId | Délie une compétence d'un projet |
 
 ## Gestion des erreurs
 
-L'API renvoie des erreurs au format JSON `{ "error": "message" }` :
+Quand il y a un problème, l'API renvoie une réponse au format `{ "error": "message" }` avec le bon code HTTP (400 si une donnée est manquante ou incorrecte, 404 si la ressource n'existe pas, 409 en cas de doublon, 500 pour une erreur côté serveur).
 
-| Code | Cas                                                                        |
-| ---- | -------------------------------------------------------------------------- |
-| 400  | Champ requis manquant, format de paramètre invalide, référence inexistante |
-| 404  | Ressource ou route introuvable                                             |
-| 409  | Doublon (ex : skill déjà associée au projet)                               |
-| 500  | Erreur interne (détails loggés côté serveur uniquement)                    |
-
-Les promesses rejetées des handlers async sont transmises automatiquement
-par Express 5 au middleware `errorHandler`, qui traduit les codes d'erreur
-PostgreSQL courants en réponses HTTP explicites.
-
----
-
-## Réinitialiser la base de données
-
-```bash
-# Via Docker (recommandé sur Windows)
-docker exec -i <nom_du_conteneur> psql -U ton_user -d adashboard -f /dev/stdin < db/migration_down.sql
-docker exec -i <nom_du_conteneur> psql -U ton_user -d adashboard -f /dev/stdin < db/migration_up.sql
-docker exec -i <nom_du_conteneur> psql -U ton_user -d adashboard -f /dev/stdin < db/seed.sql
-```
-
-Ou via Docker pour tout repartir de zéro :
+## Pour repartir de zéro avec la base de données
 
 ```bash
 docker compose down -v
 docker compose up -d
 ```
+
+## Pistes d'amélioration
+
+- Ajouter de l'authentification (JWT)
+- Écrire des tests
+- Passer le projet en TypeScript
