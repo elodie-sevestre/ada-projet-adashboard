@@ -22,20 +22,24 @@ function Categories() {
 
   useEffect(() => {
     const fetchData = async () => {
-      setIsLoading(true);
+      if (refresh === 0) setIsLoading(true); // seulement au premier chargement
       setError("");
       try {
-        // Charge catégories et projets en parallèle
         const [catRes, projRes] = await Promise.all([
           fetch(`${API_URL}/categories`),
           fetch(`${API_URL}/projects`),
         ]);
-        const [cats, projs] = await Promise.all([catRes.json(), projRes.json()]);
+        const [cats, projs] = await Promise.all([
+          catRes.json(),
+          projRes.json(),
+        ]);
         setCategories(cats);
         setAllProjects(projs);
       } catch (err) {
         console.error("Erreur :", err);
-        setError("Impossible de charger les données. Vérifiez que le serveur est démarré.");
+        setError(
+          "Impossible de charger les données. Vérifiez que le serveur est démarré.",
+        );
       } finally {
         setIsLoading(false);
       }
@@ -47,23 +51,36 @@ function Categories() {
     setRefresh((prev) => prev + 1);
   }, []);
 
-  const totalSkills = categories.reduce((sum, c) => sum + parseInt(c.total_skills), 0);
-  const validatedSkills = categories.reduce((sum, c) => sum + parseInt(c.validated_skills), 0);
-  const globalPercentage = totalSkills === 0 ? 0 : (validatedSkills / totalSkills) * 100;
+  const totalSkills = categories.reduce(
+    (sum, c) => sum + parseInt(c.total_skills),
+    0,
+  );
+  const validatedSkills = categories.reduce(
+    (sum, c) => sum + parseInt(c.validated_skills),
+    0,
+  );
+  const globalPercentage =
+    totalSkills === 0 ? 0 : (validatedSkills / totalSkills) * 100;
 
   return (
     <>
       <h3>Compétences</h3>
 
       {isLoading && <p className="state-message">Chargement...</p>}
-      {error && <p className="state-message state-message--error" role="alert">{error}</p>}
+      {error && (
+        <p className="state-message state-message--error" role="alert">
+          {error}
+        </p>
+      )}
 
       {!isLoading && !error && (
         <>
           {totalSkills > 0 && (
             <div className="global-progress">
               <div className="global-progress-header">
-                <span className="global-progress-label">Progression générale</span>
+                <span className="global-progress-label">
+                  Progression générale
+                </span>
                 <span className="global-progress-detail">
                   {validatedSkills} / {totalSkills} compétences validées
                 </span>
@@ -87,10 +104,7 @@ function Categories() {
             </div>
           )}
 
-          <AddSkillForm
-            categories={categories}
-            onSuccess={handleRefresh}
-          />
+          <AddSkillForm categories={categories} onSuccess={handleRefresh} />
 
           <div
             className="categories-grid"
@@ -111,11 +125,7 @@ function Categories() {
       )}
 
       {toast && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={hideToast}
-        />
+        <Toast message={toast.message} type={toast.type} onClose={hideToast} />
       )}
     </>
   );
