@@ -12,6 +12,7 @@
 
 import express from "express";
 import pool from "../db.js";
+import { AppError } from "../middlewares/AppError.js";
 
 export const projectsRouter = express.Router();
 
@@ -35,7 +36,7 @@ projectsRouter.get("/:id", async (req, res) => {
     [req.params.id]
   );
   if (!rows[0]) {
-    return res.status(404).json({ error: "Projet introuvable" });
+    throw new AppError(404, "Projet introuvable");
   }
   res.json(rows[0]);
 });
@@ -59,7 +60,7 @@ projectsRouter.get("/:id/skills", async (req, res) => {
 projectsRouter.post("/", async (req, res) => {
   const { name, description, status, started_at, finished_at } = req.body;
   if (!name?.trim()) {
-    return res.status(400).json({ error: "Le champ name est requis" });
+    throw new AppError(400, "Le champ name est requis");
   }
   const { rows } = await pool.query(
     `INSERT INTO projects (name, description, status, started_at, finished_at)
@@ -72,7 +73,7 @@ projectsRouter.post("/", async (req, res) => {
 // POST /projects/:id/skills - Associe une skill à un projet
 projectsRouter.post("/:id/skills", async (req, res) => {
   if (!req.body.skill_id) {
-    return res.status(400).json({ error: "Le champ skill_id est requis" });
+    throw new AppError(400, "Le champ skill_id est requis");
   }
   const { rows } = await pool.query(
     "INSERT INTO projects_skills (project_id, skill_id) VALUES ($1, $2) RETURNING *",
@@ -88,7 +89,7 @@ projectsRouter.delete("/:id/skills/:skillId", async (req, res) => {
     [req.params.id, req.params.skillId]
   );
   if (!rows[0]) {
-    return res.status(404).json({ error: "Liaison projet-skill introuvable" });
+    throw new AppError(404, "Liaison projet-skill introuvable");
   }
   res.json(rows[0]);
 });
@@ -99,7 +100,7 @@ projectsRouter.delete("/:id/skills/:skillId", async (req, res) => {
 projectsRouter.put("/:id", async (req, res) => {
   const { name, description, status, started_at, finished_at } = req.body;
   if (!name?.trim()) {
-    return res.status(400).json({ error: "Le champ name est requis" });
+    throw new AppError(400, "Le champ name est requis");
   }
   const { rows } = await pool.query(
     `UPDATE projects SET name = $1, description = $2, status = $3,
@@ -115,7 +116,7 @@ projectsRouter.put("/:id", async (req, res) => {
     ]
   );
   if (!rows[0]) {
-    return res.status(404).json({ error: "Projet introuvable" });
+    throw new AppError(404, "Projet introuvable");
   }
   res.json(rows[0]);
 });
@@ -127,7 +128,7 @@ projectsRouter.delete("/:id", async (req, res) => {
     [req.params.id]
   );
   if (!rows[0]) {
-    return res.status(404).json({ error: "Projet introuvable" });
+    throw new AppError(404, "Projet introuvable");
   }
   res.json(rows[0]);
 });

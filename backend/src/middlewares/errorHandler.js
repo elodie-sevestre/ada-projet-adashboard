@@ -19,6 +19,11 @@ export function errorHandler(err, req, res, next) {
   // Log complet côté serveur pour le débogage
   console.error(`🔴 [${req.method} ${req.originalUrl}]`, err.message);
 
+  // Erreur métier custom (throw new AppError(404, "...")) : on respecte son status
+  if (err.status) {
+    return res.status(err.status).json({ error: err.message });
+  }
+
   const mapped = PG_ERROR_MAP[err.code];
   if (mapped) {
     return res.status(mapped.status).json({ error: mapped.message });

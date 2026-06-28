@@ -9,6 +9,7 @@
 
 import express from "express";
 import pool from "../db.js";
+import { AppError } from "../middlewares/AppError.js";
 
 export const categoriesRouter = express.Router();
 
@@ -37,7 +38,7 @@ categoriesRouter.get("/:id", async (req, res) => {
     [req.params.id]
   );
   if (!rows[0]) {
-    return res.status(404).json({ error: "Catégorie introuvable" });
+    throw new AppError(404, "Catégorie introuvable");
   }
   res.json(rows[0]);
 });
@@ -73,7 +74,7 @@ categoriesRouter.get("/:id/skills", async (req, res) => {
 categoriesRouter.post("/", async (req, res) => {
   const { name } = req.body;
   if (!name?.trim()) {
-    return res.status(400).json({ error: "Le champ name est requis" });
+    throw new AppError(400, "Le champ name est requis");
   }
   const { rows } = await pool.query(
     "INSERT INTO categories (name) VALUES ($1) RETURNING *",
@@ -87,14 +88,14 @@ categoriesRouter.post("/", async (req, res) => {
 categoriesRouter.patch("/:id", async (req, res) => {
   const { name } = req.body;
   if (!name?.trim()) {
-    return res.status(400).json({ error: "Le champ name est requis" });
+    throw new AppError(400, "Le champ name est requis");
   }
   const { rows } = await pool.query(
     "UPDATE categories SET name = $1 WHERE id = $2 RETURNING *",
     [name.trim(), req.params.id]
   );
   if (!rows[0]) {
-    return res.status(404).json({ error: "Catégorie introuvable" });
+    throw new AppError(404, "Catégorie introuvable");
   }
   res.json(rows[0]);
 });
@@ -107,7 +108,7 @@ categoriesRouter.delete("/:id", async (req, res) => {
     [req.params.id]
   );
   if (!rows[0]) {
-    return res.status(404).json({ error: "Catégorie introuvable" });
+    throw new AppError(404, "Catégorie introuvable");
   }
   res.json(rows[0]);
 });

@@ -8,6 +8,7 @@
 
 import express from "express";
 import pool from "../db.js"; // connexion PostgreSQL
+import { AppError } from "../middlewares/AppError.js";
 
 export const skillsRouter = express.Router();
 
@@ -47,7 +48,7 @@ skillsRouter.get("/:id", async (req, res) => {
     [req.params.id]
   );
   if (!rows[0]) {
-    return res.status(404).json({ error: "Skill introuvable" });
+    throw new AppError(404, "Skill introuvable");
   }
   res.json(rows[0]);
 });
@@ -57,9 +58,7 @@ skillsRouter.get("/:id", async (req, res) => {
 skillsRouter.post("/", async (req, res) => {
   const { description, category_id } = req.body;
   if (!description?.trim() || !category_id) {
-    return res
-      .status(400)
-      .json({ error: "Les champs description et category_id sont requis" });
+    throw new AppError(400, "Les champs description et category_id sont requis");
   }
   const { rows } = await pool.query(
     "INSERT INTO skills (description, category_id) VALUES ($1, $2) RETURNING *",
@@ -73,14 +72,14 @@ skillsRouter.post("/", async (req, res) => {
 skillsRouter.put("/:id", async (req, res) => {
   const { description } = req.body;
   if (!description?.trim()) {
-    return res.status(400).json({ error: "Le champ description est requis" });
+    throw new AppError(400, "Le champ description est requis");
   }
   const { rows } = await pool.query(
     "UPDATE skills SET description = $1 WHERE id = $2 RETURNING *",
     [description.trim(), req.params.id]
   );
   if (!rows[0]) {
-    return res.status(404).json({ error: "Skill introuvable" });
+    throw new AppError(404, "Skill introuvable");
   }
   res.json(rows[0]);
 });
@@ -89,16 +88,14 @@ skillsRouter.put("/:id", async (req, res) => {
 // Attend dans le body : { validated: boolean }
 skillsRouter.patch("/:id", async (req, res) => {
   if (typeof req.body.validated !== "boolean") {
-    return res
-      .status(400)
-      .json({ error: "Le champ validated (booléen) est requis" });
+    throw new AppError(400, "Le champ validated (booléen) est requis");
   }
   const { rows } = await pool.query(
     "UPDATE skills SET validated = $1 WHERE id = $2 RETURNING *",
     [req.body.validated, req.params.id]
   );
   if (!rows[0]) {
-    return res.status(404).json({ error: "Skill introuvable" });
+    throw new AppError(404, "Skill introuvable");
   }
   res.json(rows[0]);
 });
@@ -110,7 +107,7 @@ skillsRouter.delete("/:id", async (req, res) => {
     [req.params.id]
   );
   if (!rows[0]) {
-    return res.status(404).json({ error: "Skill introuvable" });
+    throw new AppError(404, "Skill introuvable");
   }
   res.json(rows[0]);
 });
