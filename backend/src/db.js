@@ -12,13 +12,21 @@ dotenv.config();
 // Création du pool avec les paramètres de connexion issus du .env
 // L'hôte est configurable (utile si la base tourne ailleurs qu'en local,
 // par exemple dans un conteneur Docker sur un autre réseau)
-const pool = new Pool({
-  user: process.env.POSTGRES_USER,
-  host: process.env.POSTGRES_HOST || "localhost",
-  database: process.env.POSTGRES_DB,
-  password: process.env.POSTGRES_PASSWORD,
-  port: process.env.POSTGRES_PORT || 5432,
-});
+//
+// Si DATABASE_URL est défini (ex: Neon en production), on l'utilise directement
+// avec SSL activé. Sinon on retombe sur les paramètres séparés (Docker en local).
+const pool = process.env.DATABASE_URL
+  ? new Pool({
+      connectionString: process.env.DATABASE_URL,
+      ssl: { rejectUnauthorized: false },
+    })
+  : new Pool({
+      user: process.env.POSTGRES_USER,
+      host: process.env.POSTGRES_HOST || "localhost",
+      database: process.env.POSTGRES_DB,
+      password: process.env.POSTGRES_PASSWORD,
+      port: process.env.POSTGRES_PORT || 5432,
+    });
 
 // Test de connexion au démarrage : affiche un message selon le résultat
 pool

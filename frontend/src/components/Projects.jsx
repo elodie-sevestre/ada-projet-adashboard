@@ -21,9 +21,9 @@ import {
 } from "@dnd-kit/core";
 
 const COLUMNS = [
-  { id: "TODO",        label: "À faire" },
+  { id: "TODO", label: "À faire" },
   { id: "IN_PROGRESS", label: "En cours" },
-  { id: "DONE",        label: "Terminé" },
+  { id: "DONE", label: "Terminé" },
 ];
 
 function Projects() {
@@ -52,7 +52,9 @@ function Projects() {
       setProjects(data);
     } catch (err) {
       console.error("Erreur :", err);
-      setError("Impossible de charger les projets. Vérifiez que le serveur est démarré.");
+      setError(
+        "Impossible de charger les projets. Vérifiez que le serveur est démarré.",
+      );
     } finally {
       setIsLoading(false);
     }
@@ -78,7 +80,13 @@ function Projects() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newProject),
       });
-      setNewProject({ name: "", description: "", status: "TODO", started_at: "", finished_at: "" });
+      setNewProject({
+        name: "",
+        description: "",
+        status: "TODO",
+        started_at: "",
+        finished_at: "",
+      });
       setShowForm(false);
       handleRefresh();
     } catch (err) {
@@ -88,11 +96,13 @@ function Projects() {
   };
 
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
   );
 
   const handleDragStart = (event) => {
-    const project = projects.find((p) => String(p.id) === String(event.active.id));
+    const project = projects.find(
+      (p) => String(p.id) === String(event.active.id),
+    );
     setActiveProject(project || null);
   };
 
@@ -111,7 +121,9 @@ function Projects() {
 
     // Mise à jour optimiste
     setProjects((prev) =>
-      prev.map((p) => (String(p.id) === projectId ? { ...p, status: newStatus } : p))
+      prev.map((p) =>
+        String(p.id) === projectId ? { ...p, status: newStatus } : p,
+      ),
     );
 
     try {
@@ -138,7 +150,11 @@ function Projects() {
       <h3>Projets</h3>
 
       {isLoading && <p className="state-message">Chargement...</p>}
-      {error && <p className="state-message state-message--error" role="alert">{error}</p>}
+      {error && (
+        <p className="state-message state-message--error" role="alert">
+          {error}
+        </p>
+      )}
 
       {!isLoading && !error && (
         <>
@@ -148,7 +164,10 @@ function Projects() {
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}
           >
-            <div className="kanban-board" aria-label="Tableau kanban des projets">
+            <div
+              className="kanban-board"
+              aria-label="Tableau kanban des projets"
+            >
               {COLUMNS.map((col) => (
                 <KanbanColumn
                   key={col.id}
@@ -182,13 +201,36 @@ function Projects() {
           </button>
 
           {showForm && (
-            <div className="project-form" id="new-project-form" role="form" aria-label="Créer un nouveau projet">
+            <div
+              className="project-form"
+              id="new-project-form"
+              role="form"
+              aria-label="Créer un nouveau projet"
+            >
               <label htmlFor="new-name">Nom du projet</label>
-              <input id="new-name" type="text" name="name" placeholder="Nom du projet" value={newProject.name} onChange={handleNewChange} />
+              <input
+                id="new-name"
+                type="text"
+                name="name"
+                placeholder="Nom du projet"
+                value={newProject.name}
+                onChange={handleNewChange}
+              />
               <label htmlFor="new-description">Description</label>
-              <textarea id="new-description" name="description" placeholder="Description" value={newProject.description} onChange={handleNewChange} />
+              <textarea
+                id="new-description"
+                name="description"
+                placeholder="Description"
+                value={newProject.description}
+                onChange={handleNewChange}
+              />
               <label htmlFor="new-status">Statut</label>
-              <select id="new-status" name="status" value={newProject.status} onChange={handleNewChange}>
+              <select
+                id="new-status"
+                name="status"
+                value={newProject.status}
+                onChange={handleNewChange}
+              >
                 <option value="TODO">À faire</option>
                 <option value="IN_PROGRESS">En cours</option>
                 <option value="DONE">Terminé</option>
@@ -196,16 +238,35 @@ function Projects() {
               <div className="form-dates">
                 <label htmlFor="new-start">
                   Début
-                  <input id="new-start" type="date" name="started_at" value={newProject.started_at} onChange={handleNewChange} />
+                  <input
+                    id="new-start"
+                    type="date"
+                    name="started_at"
+                    value={newProject.started_at}
+                    onChange={handleNewChange}
+                  />
                 </label>
                 <label htmlFor="new-end">
                   Fin
-                  <input id="new-end" type="date" name="finished_at" value={newProject.finished_at} onChange={handleNewChange} />
+                  <input
+                    id="new-end"
+                    type="date"
+                    name="finished_at"
+                    value={newProject.finished_at}
+                    onChange={handleNewChange}
+                  />
                 </label>
               </div>
               <div className="form-actions">
-                <button className="btn-validate" onClick={handleAddProject}>Créer</button>
-                <button className="btn-cancel" onClick={() => setShowForm(false)}>Annuler</button>
+                <button className="btn-validate" onClick={handleAddProject}>
+                  Créer
+                </button>
+                <button
+                  className="btn-cancel"
+                  onClick={() => setShowForm(false)}
+                >
+                  Annuler
+                </button>
               </div>
             </div>
           )}
@@ -213,11 +274,7 @@ function Projects() {
       )}
 
       {toast && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={hideToast}
-        />
+        <Toast message={toast.message} type={toast.type} onClose={hideToast} />
       )}
     </>
   );
@@ -242,7 +299,12 @@ function KanbanColumn({ column, projects, onRefresh, onError }) {
       </h4>
       <div className="kanban-column-cards">
         {projects.map((project) => (
-          <DraggableCard key={project.id} project={project} onRefresh={onRefresh} onError={onError} />
+          <DraggableCard
+            key={project.id}
+            project={project}
+            onRefresh={onRefresh}
+            onError={onError}
+          />
         ))}
       </div>
     </section>
@@ -254,9 +316,10 @@ function KanbanColumn({ column, projects, onRefresh, onError }) {
 import { useDraggable } from "@dnd-kit/core";
 
 function DraggableCard({ project, onRefresh, onError }) {
-  const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
-    id: String(project.id),
-  });
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
+    useDraggable({
+      id: String(project.id),
+    });
 
   const style = transform
     ? { transform: `translate(${transform.x}px, ${transform.y}px)` }
