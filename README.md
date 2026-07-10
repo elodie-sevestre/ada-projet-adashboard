@@ -154,6 +154,14 @@ docker compose down -v
 docker compose up -d
 ```
 
+## Déploiement (Render + Neon)
+
+- Base de données : créer un projet sur [Neon](https://neon.tech), récupérer la connection string, puis y exécuter `db/migration_up.sql` et `db/seed.sql`.
+- Backend + frontend : sur [Render](https://render.com), utiliser "New > Blueprint" et pointer vers ce dépôt (le fichier `render.yaml` à la racine configure les deux services).
+- Variables à renseigner manuellement dans le dashboard Render :
+  - `adashboard-backend` → `DATABASE_URL` (connection string Neon, avec `?sslmode=require`)
+  - `adashboard-frontend` → `VITE_API_URL` (URL publique du service backend Render)
+
 ## Pistes d'amélioration
 
 - Ajouter de l'authentification (JWT)
