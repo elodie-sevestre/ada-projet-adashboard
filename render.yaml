@@ -16,7 +16,7 @@ services:
     name: adashboard-frontend
     runtime: static
     rootDir: frontend
-    buildCommand: corepack enable && corepack prepare pnpm@latest --activate && pnpm install && pnpm build
+    buildCommand: pnpm install && pnpm build
     staticPublishPath: dist
     envVars:
       - key: VITE_API_URL
