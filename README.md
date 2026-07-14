@@ -160,7 +160,7 @@ docker compose up -d
 - Backend + frontend : sur [Render](https://render.com), utiliser "New > Blueprint" et pointer vers ce dépôt (le fichier `render.yaml` à la racine configure les deux services).
 - Variables à renseigner manuellement dans le dashboard Render :
   - `adashboard-backend` → `DATABASE_URL` (connection string Neon, avec `?sslmode=require`)
-  - `adashboard-frontend` → `VITE_API_URL` (URL publique du service backend Render)
+  - `learning-tracking-dashboard` → `VITE_API_URL` (URL publique du service backend Render)
 
 ## Pistes d'amélioration
 
