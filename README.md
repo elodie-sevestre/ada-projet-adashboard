@@ -2,7 +2,9 @@
 
 Projet réalisé pendant ma formation à Ada Tech School.
 
-C'est un petit dashboard qui me permet de suivre mes compétences en code et mes projets. Je peux voir où j'en suis par catégorie de compétence, et gérer mes projets sous forme de kanban (à faire / en cours / terminé).
+C'est un dashboard qui me permet de suivre mes compétences en code et mes projets. Je peux voir où j'en suis par catégorie de compétence, et gérer mes projets sous forme de kanban (à faire / en cours / terminé).
+
+🔗 Démo en ligne : https://adashboard-project.onrender.com
 
 ## Technologies utilisées
 
