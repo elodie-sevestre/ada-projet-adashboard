@@ -4,8 +4,6 @@ Projet réalisé pendant ma formation à Ada Tech School.
 
 C'est un dashboard qui me permet de suivre mes compétences en code et mes projets. Je peux voir où j'en suis par catégorie de compétence, et gérer mes projets sous forme de kanban (à faire / en cours / terminé).
 
-🔗 Démo en ligne : https://adashboard-project.onrender.com
-
 ## Technologies utilisées
 
 - **Front** (`frontend/`) : React + Vite, CSS classique, @dnd-kit pour le drag & drop
@@ -155,14 +153,6 @@ Quand il y a un problème, l'API renvoie une réponse au format `{ "error": "mes
 docker compose down -v
 docker compose up -d
 ```
-
-## Déploiement (Render + Neon)
-
-- Base de données : créer un projet sur [Neon](https://neon.tech), récupérer la connection string, puis y exécuter `db/migration_up.sql` et `db/seed.sql`.
-- Backend + frontend : sur [Render](https://render.com), utiliser "New > Blueprint" et pointer vers ce dépôt (le fichier `render.yaml` à la racine configure les deux services).
-- Variables à renseigner manuellement dans le dashboard Render :
-  - `adashboard-backend` → `DATABASE_URL` (connection string Neon, avec `?sslmode=require`)
-  - `learning-tracking-dashboard` → `VITE_API_URL` (URL publique du service backend Render)
 
 ## Pistes d'amélioration
 
